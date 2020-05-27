@@ -447,6 +447,10 @@
 --> 
 <img src="/distributed-bugs-are-often-latent-a-troubleshoot-story/appendix_ntpq_stats.png" class="">
 ]]></content>
+      <categories>
+        <category>openstack</category>
+        <category>distributed systems</category>
+      </categories>
       <tags>
         <tag>openstack</tag>
         <tag>distributed system</tag>
@@ -782,7 +786,7 @@
 
 ]]></content>
       <categories>
-        <category>openstack stuff</category>
+        <category>openstack</category>
       </categories>
       <tags>
         <tag>openstack</tag>
@@ -1124,9 +1128,12 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@operator:/etc/kolla<span class="comment"># . /etc/kolla/admin-openrc.sh</span></span><br><span class="line">root@operator:/etc/kolla<span class="comment"># openstack service list</span></span><br><span class="line">+----------------------------------+-------------+----------------+</span><br><span class="line">| ID                               | Name        | Type           |</span><br><span class="line">+----------------------------------+-------------+----------------+</span><br><span class="line">| 16c0c5e034a145f4815fb3d242d393bf | keystone    | identity       |</span><br><span class="line">| 4adf583360da4e5a95f091efd1fd9343 | placement   | placement      |</span><br><span class="line">| 837d588b2f6f41c7a1d41d85e99e8906 | nova_legacy | compute_legacy |</span><br><span class="line">| 88807288c83b445e8a03fccbc8453cc0 | heat-cfn    | cloudformation |</span><br><span class="line">| b74e3c61de794de3a0bc34a3fdf86ab7 | nova        | compute        |</span><br><span class="line">| d975a75ca12b4b44b5c8423783e47b76 | neutron     | network        |</span><br><span class="line">| e4860fe43a624f19a1001801d6eec511 | glance      | image          |</span><br><span class="line">| f776a802710840ee9003c1b91fa91a41 | heat        | orchestration  |</span><br><span class="line">+----------------------------------+-------------+----------------+</span><br><span class="line"></span><br><span class="line">root@operator:/etc/kolla<span class="comment"># openstack network agent list</span></span><br><span class="line">+--------------------------------------+--------------------+----------+-------------------+-------+-------+---------------------------+</span><br><span class="line">| ID                                   | Agent Type         | Host     | Availability Zone | Alive | State | Binary                    |</span><br><span class="line">+--------------------------------------+--------------------+----------+-------------------+-------+-------+---------------------------+</span><br><span class="line">| 05a9fcb8-14a5-46a8-b6b7-1430153d7246 | Linux bridge agent | operator | None              | :-)   | UP    | neutron-linuxbridge-agent |</span><br><span class="line">| 16a0abce-a33c-4dda-b13b-d74523ed9b3b | L3 agent           | operator | nova              | :-)   | UP    | neutron-l3-agent          |</span><br><span class="line">| 8e7f251e-243f-4721-97a7-7cb4060ffa18 | Metadata agent     | operator | None              | :-)   | UP    | neutron-metadata-agent    |</span><br><span class="line">| e4e7c5f0-6c79-40ea-9d8c-1da7673e80a5 | DHCP agent         | operator | nova              | :-)   | UP    | neutron-dhcp-agent        |</span><br><span class="line">+--------------------------------------+--------------------+----------+-------------------+-------+-------+---------------------------+</span><br><span class="line"></span><br><span class="line">root@operator:/etc/kolla<span class="comment"># openstack compute service list</span></span><br><span class="line">+----+----------------+----------+----------+---------+-------+----------------------------+</span><br><span class="line">| ID | Binary         | Host     | Zone     | Status  | State | Updated At                 |</span><br><span class="line">+----+----------------+----------+----------+---------+-------+----------------------------+</span><br><span class="line">|  4 | nova-scheduler | operator | internal | enabled | up    | 2020-05-21T15:34:28.000000 |</span><br><span class="line">|  1 | nova-conductor | operator | internal | enabled | up    | 2020-05-21T15:34:35.000000 |</span><br><span class="line">|  2 | nova-compute   | operator | nova     | enabled | up    | 2020-05-21T15:34:36.000000 |</span><br><span class="line">+----+----------------+----------+----------+---------+-------+----------------------------+</span><br></pre></td></tr></table></figure>
 
 ]]></content>
+      <categories>
+        <category>openstack</category>
+      </categories>
       <tags>
-        <tag>Openstack</tag>
-        <tag>Vagrant</tag>
+        <tag>openstack</tag>
+        <tag>vagrant</tag>
       </tags>
   </entry>
   <entry>
@@ -3105,7 +3112,7 @@ Comment out any other session storage configuration.</code></pre><ul>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">udhcpc (v1.20.1) started</span><br><span class="line">Sending discover...</span><br><span class="line">Sending discover...</span><br><span class="line">Sending select <span class="keyword">for</span> 172.16.0.105...</span><br><span class="line">Lease of 172.16.0.105 obtained, lease time 86400</span><br><span class="line">route: SIOCADDRT: File exists</span><br><span class="line">WARN: failed: route add -net <span class="string">"0.0.0.0/0"</span> gw <span class="string">"172.16.0.1"</span></span><br><span class="line">cirros-ds <span class="string">'net'</span> up at 74.67</span><br><span class="line">checking http://169.254.169.254/2009-04-04/instance-id</span><br><span class="line">successful after 1/20 tries: up 75.02. iid=i-00000009</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
-        <category>openstack stuff</category>
+        <category>openstack</category>
       </categories>
       <tags>
         <tag>openstack</tag>
