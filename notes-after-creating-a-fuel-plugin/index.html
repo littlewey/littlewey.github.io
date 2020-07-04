@@ -31,7 +31,7 @@
 <meta property="og:site_name" content="Siwei notes">
 <meta property="og:description" content="关于这篇文章是我做一个内部 knowledge sharing准备的文档，介绍了如何基于MIranis fuel的平台开发一个fuel plugin，我用了一个死了的项目 nova-docker作为实际的例子。 Build a fuel plugin from scrash Live demo: Let’s try to build a fuel plugin enables nova-docke">
 <meta property="article:published_time" content="2019-01-17T02:15:12.000Z">
-<meta property="article:modified_time" content="2020-05-27T07:33:23.842Z">
+<meta property="article:modified_time" content="2020-07-04T02:55:55.397Z">
 <meta property="article:author" content="Wey Gu | 古思为">
 <meta property="article:tag" content="openstack">
 <meta property="article:tag" content="fuel-plugin">
@@ -347,7 +347,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-05-27 15:33:23" itemprop="dateModified" datetime="2020-05-27T15:33:23+08:00">2020-05-27</time>
+                <time title="Modified: 2020-07-04 10:55:55" itemprop="dateModified" datetime="2020-07-04T10:55:55+08:00">2020-07-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -374,7 +374,7 @@
 <h1 id="Build-a-fuel-plugin-from-scrash"><a href="#Build-a-fuel-plugin-from-scrash" class="headerlink" title="Build a fuel plugin from scrash"></a>Build a fuel plugin from scrash</h1><blockquote>
 <p><strong>Live demo:</strong></p>
 <p>Let’s try to build a fuel plugin enables nova-docker</p>
-<p>Code put here: <a href="https://github.com/littlewey/fuel-plugin-nova-docker" target="_blank" rel="noopener">https://github.com/littlewey/fuel-plugin-nova-docker</a></p>
+<p>Code put here: <a href="https://github.com/wey-gu/fuel-plugin-nova-docker" target="_blank" rel="noopener">https://github.com/wey-gu/fuel-plugin-nova-docker</a></p>
 </blockquote>
 <h2 id="Create-fuel-plugin-for-nova-docker"><a href="#Create-fuel-plugin-for-nova-docker" class="headerlink" title="Create fuel plugin for nova-docker"></a>Create fuel plugin for <code>nova-docker</code></h2><p><strong>Steps needed:</strong></p>
 <ul>
@@ -505,7 +505,7 @@
 
 
 <h3 id="Metadata-change"><a href="#Metadata-change" class="headerlink" title="Metadata change"></a>Metadata change</h3><p><code>metadata.yaml</code> are changed accordingly</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">homepage:</span> <span class="string">'https://github.com/littlewey/fuel-plugin-nova-docker'</span></span><br><span class="line"><span class="attr">is_hotpluggable:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">homepage:</span> <span class="string">'https://github.com/wey-gu/fuel-plugin-nova-docker'</span></span><br><span class="line"><span class="attr">is_hotpluggable:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="Debug-fuel-plugin-deployment"><a href="#Debug-fuel-plugin-deployment" class="headerlink" title="Debug fuel plugin deployment"></a>Debug fuel plugin deployment</h3><h3 id="Install-plugin"><a href="#Install-plugin" class="headerlink" title="Install plugin"></a>Install plugin</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ scp ./nova_docker-1.0-1.0.0-1.noarch.rpm fuel:/root/</span><br><span class="line"></span><br><span class="line">$ fuel plugins --install /root/nova_docker-1.0-1.0.0-1.noarch.rpm</span><br><span class="line"></span><br><span class="line">$ fuel plugins --sync</span><br></pre></td></tr></table></figure>
 
