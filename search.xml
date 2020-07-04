@@ -304,6 +304,74 @@
       </tags>
   </entry>
   <entry>
+    <title>jupyter pyenv and virtualenv in macOS</title>
+    <url>/jupyter-notes/</url>
+    <content><![CDATA[<blockquote>
+<p>Conbined with <code>pyenv</code>  <code>virtualenv</code> and <code>Jupyter kernal specification</code>, we could have different versions of project-specific python wrapper as below.</p>
+<p>This article includes needed information on enabling this.</p>
+</blockquote>
+<h1 id="pyenv"><a href="#pyenv" class="headerlink" title="pyenv"></a>pyenv</h1><blockquote>
+<p>ref: <a href="https://github.com/pyenv/pyenv/issues/1219" target="_blank" rel="noopener">https://github.com/pyenv/pyenv/issues/1219</a></p>
+</blockquote>
+<p><code>zlib not available</code>, one thing to highlight is to enable zlib, we have to do this:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">xcode-select --install</span><br><span class="line">sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /</span><br></pre></td></tr></table></figure>
+
+<p>Below are things we need to ensure pyenv magically modified our enviroment variables to point specific version of python.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ brew install pyenv</span><br><span class="line">$ <span class="built_in">cd</span> &lt;project_path&gt;</span><br><span class="line">$ pyenv install 3.6.8</span><br><span class="line">$ pyenv <span class="built_in">local</span> 3.6.8</span><br><span class="line">$ pyenv init</span><br><span class="line"><span class="comment"># Load pyenv automatically by appending</span></span><br><span class="line"><span class="comment"># the following to ~/.zshrc:</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">eval</span> <span class="string">"<span class="variable">$(pyenv init -)</span>"</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">which</span> python</span><br><span class="line">/usr/<span class="built_in">local</span>/bin/python</span><br><span class="line">$ <span class="built_in">eval</span> <span class="string">"<span class="variable">$(pyenv init -)</span>"</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">which</span> python</span><br><span class="line">/Users/&lt;user&gt;/.pyenv/shims/python</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="jupyter-IPython-kernel-management"><a href="#jupyter-IPython-kernel-management" class="headerlink" title="jupyter/IPython kernel management"></a>jupyter/IPython kernel management</h2><blockquote>
+<p>ref: <a href="https://ipython.readthedocs.io/en/latest/install/kernel_install.html" target="_blank" rel="noopener">https://ipython.readthedocs.io/en/latest/install/kernel_install.html</a></p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ jupyter kernelspec list</span><br><span class="line">Available kernels:</span><br><span class="line">  python3    /usr/<span class="built_in">local</span>/share/jupyter/kernels/python3</span><br><span class="line"></span><br><span class="line">$ python -m virtualenv py36</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">source</span> py36/bin/activate</span><br><span class="line"></span><br><span class="line">$ pip install ipykernel</span><br><span class="line"></span><br><span class="line">$ python -m ipykernel install --user --name py36 --display-name <span class="string">"ProjectName py36"</span></span><br><span class="line"></span><br><span class="line">$ jupyter kernelspec list</span><br><span class="line">Available kernels:</span><br><span class="line">  py36       /Users/&lt;user&gt;/Library/Jupyter/kernels/py36</span><br><span class="line">  python3    /usr/<span class="built_in">local</span>/share/jupyter/kernels/python3</span><br></pre></td></tr></table></figure>
+
+<p>Then, from the jupyter notebook webpage, you could select kernels from <code>Kernel: Change Kernel</code></p>
+<h2 id="matplotlib-calling-latex-failed-on-macOS"><a href="#matplotlib-calling-latex-failed-on-macOS" class="headerlink" title="matplotlib calling latex failed on macOS"></a><code>matplotlib</code> calling <code>latex</code> failed on macOS</h2><blockquote>
+<p>plot call failed due to latex could not be invoked</p>
+</blockquote>
+<h3 id="Root-cause"><a href="#Root-cause" class="headerlink" title="Root cause"></a>Root cause</h3><p>LaTeX was not installed or cannot be called from<code>latex</code></p>
+<h3 id="Minimal-reproducing"><a href="#Minimal-reproducing" class="headerlink" title="Minimal reproducing"></a>Minimal reproducing</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; import subprocess; subprocess.check_call(<span class="string">"latex"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># FileNotFoundError: [Errno 2] No such file or directory: 'latex': 'latex'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># or from shell</span></span><br><span class="line"></span><br><span class="line">$ latex</span><br><span class="line"><span class="comment"># latex not found</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Fix"><a href="#Fix" class="headerlink" title="Fix"></a>Fix</h3><ul>
+<li>install Tex Live for macOS</li>
+<li>append <code>PATH</code> for <code>/Library/TeX/texbin</code></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ wget http://tug.org/cgi-bin/mactex-download/MacTeX.pkg</span><br><span class="line"><span class="comment"># checksum and install MacTeX.pkg</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># assuming you are using zsh</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">'export PATH="$PATH:/Library/TeX/texbin"'</span> &gt;&gt; ~/.zshrc</span><br><span class="line"></span><br><span class="line"><span class="comment"># assuming you are using bash</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">'export PATH="$PATH:/Library/TeX/texbin"'</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<h3 id="Verify-it"><a href="#Verify-it" class="headerlink" title="Verify it"></a>Verify it</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">export</span> PATH=<span class="string">"<span class="variable">$PATH</span>:/Library/TeX/texbin"</span></span><br><span class="line">$ latex --version</span><br><span class="line">pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)</span><br><span class="line">kpathsea version 6.3.0</span><br><span class="line">Copyright 2018 Han The Thanh (pdfTeX) et al.</span><br><span class="line">There is NO warranty.  Redistribution of this software is</span><br><span class="line">covered by the terms of both the pdfTeX copyright and</span><br><span class="line">the Lesser GNU General Public License.</span><br><span class="line">For more information about these matters, see the file</span><br><span class="line">named COPYING and the pdfTeX <span class="built_in">source</span>.</span><br><span class="line">Primary author of pdfTeX: Han The Thanh (pdfTeX) et al.</span><br><span class="line">Compiled with libpng 1.6.34; using libpng 1.6.34</span><br><span class="line">Compiled with zlib 1.2.11; using zlib 1.2.11</span><br><span class="line">Compiled with xpdf version 4.00</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>random notes</category>
+      </categories>
+      <tags>
+        <tag>jupyter</tag>
+        <tag>pyenv</tag>
+        <tag>virtualenv</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>my HHKB and macOS setup</title>
+    <url>/my-hhkb-and-macos-setup/</url>
+    <content><![CDATA[<h1 id="Key-mapping"><a href="#Key-mapping" class="headerlink" title="Key mapping"></a>Key mapping</h1><blockquote>
+<p>几个月前，我从 <code>HHKB Lite2 for Mac</code>  切换到了  <code>HHKB Pro 2 Type-S</code>，方向键需要map成 <code>Ctrl + h/ j/ k/ l</code> ，参考了@zjun 的 <a href="http://www.zjunothing.com/2017/05/28/hhkb%E5%9F%BA%E6%9C%AC%E8%AE%BE%E7%BD%AE/" target="_blank" rel="noopener">best practise</a> ，用到了 <a href="http://www.hammerspoon.org/" target="_blank" rel="noopener">Hammerspoon</a>，这里记录一下配置。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">~/.hammerspoon</span><br><span class="line">❯ cat init.lua</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight lua"><table><tr><td class="code"><pre><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">pressFn</span><span class="params">(mods, key)</span></span></span><br><span class="line">	<span class="keyword">if</span> key == <span class="literal">nil</span> <span class="keyword">then</span></span><br><span class="line">		key = mods</span><br><span class="line">		mods = &#123;&#125;</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">function</span><span class="params">()</span></span> hs.eventtap.keyStroke(mods, key, <span class="number">1000</span>) <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">remap</span><span class="params">(mods, key, pressFn)</span></span></span><br><span class="line">	hs.hotkey.bind(mods, key, pressFn, <span class="literal">nil</span>, pressFn)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>&#125;, <span class="string">'h'</span>, pressFn(<span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>&#125;, <span class="string">'j'</span>, pressFn(<span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>&#125;, <span class="string">'k'</span>, pressFn(<span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>&#125;, <span class="string">'l'</span>, pressFn(<span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'shift'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'shift'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'shift'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'shift'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'cmd'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'cmd'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'cmd'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'cmd'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'alt'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'alt'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'alt'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'alt'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'right'</span>))</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>random notes</category>
+      </categories>
+      <tags>
+        <tag>HHKB</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Distributed bugs are often latent: a Troubleshoot Story</title>
     <url>/distributed-bugs-are-often-latent-a-troubleshoot-story/</url>
     <content><![CDATA[<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>OpenStack, as a nested distributed system(where some of the subsystems are distributed systems), to troubleshoot on it could be quite tricky, not to mention its interdependence with other distributed systems in real word.</p>
@@ -458,74 +526,6 @@
         <tag>distributed system</tag>
         <tag>troubleshoot</tag>
         <tag>NTP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>jupyter pyenv and virtualenv in macOS</title>
-    <url>/jupyter-notes/</url>
-    <content><![CDATA[<blockquote>
-<p>Conbined with <code>pyenv</code>  <code>virtualenv</code> and <code>Jupyter kernal specification</code>, we could have different versions of project-specific python wrapper as below.</p>
-<p>This article includes needed information on enabling this.</p>
-</blockquote>
-<h1 id="pyenv"><a href="#pyenv" class="headerlink" title="pyenv"></a>pyenv</h1><blockquote>
-<p>ref: <a href="https://github.com/pyenv/pyenv/issues/1219" target="_blank" rel="noopener">https://github.com/pyenv/pyenv/issues/1219</a></p>
-</blockquote>
-<p><code>zlib not available</code>, one thing to highlight is to enable zlib, we have to do this:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">xcode-select --install</span><br><span class="line">sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /</span><br></pre></td></tr></table></figure>
-
-<p>Below are things we need to ensure pyenv magically modified our enviroment variables to point specific version of python.</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ brew install pyenv</span><br><span class="line">$ <span class="built_in">cd</span> &lt;project_path&gt;</span><br><span class="line">$ pyenv install 3.6.8</span><br><span class="line">$ pyenv <span class="built_in">local</span> 3.6.8</span><br><span class="line">$ pyenv init</span><br><span class="line"><span class="comment"># Load pyenv automatically by appending</span></span><br><span class="line"><span class="comment"># the following to ~/.zshrc:</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">eval</span> <span class="string">"<span class="variable">$(pyenv init -)</span>"</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">which</span> python</span><br><span class="line">/usr/<span class="built_in">local</span>/bin/python</span><br><span class="line">$ <span class="built_in">eval</span> <span class="string">"<span class="variable">$(pyenv init -)</span>"</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">which</span> python</span><br><span class="line">/Users/&lt;user&gt;/.pyenv/shims/python</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="jupyter-IPython-kernel-management"><a href="#jupyter-IPython-kernel-management" class="headerlink" title="jupyter/IPython kernel management"></a>jupyter/IPython kernel management</h2><blockquote>
-<p>ref: <a href="https://ipython.readthedocs.io/en/latest/install/kernel_install.html" target="_blank" rel="noopener">https://ipython.readthedocs.io/en/latest/install/kernel_install.html</a></p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ jupyter kernelspec list</span><br><span class="line">Available kernels:</span><br><span class="line">  python3    /usr/<span class="built_in">local</span>/share/jupyter/kernels/python3</span><br><span class="line"></span><br><span class="line">$ python -m virtualenv py36</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">source</span> py36/bin/activate</span><br><span class="line"></span><br><span class="line">$ pip install ipykernel</span><br><span class="line"></span><br><span class="line">$ python -m ipykernel install --user --name py36 --display-name <span class="string">"ProjectName py36"</span></span><br><span class="line"></span><br><span class="line">$ jupyter kernelspec list</span><br><span class="line">Available kernels:</span><br><span class="line">  py36       /Users/&lt;user&gt;/Library/Jupyter/kernels/py36</span><br><span class="line">  python3    /usr/<span class="built_in">local</span>/share/jupyter/kernels/python3</span><br></pre></td></tr></table></figure>
-
-<p>Then, from the jupyter notebook webpage, you could select kernels from <code>Kernel: Change Kernel</code></p>
-<h2 id="matplotlib-calling-latex-failed-on-macOS"><a href="#matplotlib-calling-latex-failed-on-macOS" class="headerlink" title="matplotlib calling latex failed on macOS"></a><code>matplotlib</code> calling <code>latex</code> failed on macOS</h2><blockquote>
-<p>plot call failed due to latex could not be invoked</p>
-</blockquote>
-<h3 id="Root-cause"><a href="#Root-cause" class="headerlink" title="Root cause"></a>Root cause</h3><p>LaTeX was not installed or cannot be called from<code>latex</code></p>
-<h3 id="Minimal-reproducing"><a href="#Minimal-reproducing" class="headerlink" title="Minimal reproducing"></a>Minimal reproducing</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; import subprocess; subprocess.check_call(<span class="string">"latex"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># FileNotFoundError: [Errno 2] No such file or directory: 'latex': 'latex'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># or from shell</span></span><br><span class="line"></span><br><span class="line">$ latex</span><br><span class="line"><span class="comment"># latex not found</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Fix"><a href="#Fix" class="headerlink" title="Fix"></a>Fix</h3><ul>
-<li>install Tex Live for macOS</li>
-<li>append <code>PATH</code> for <code>/Library/TeX/texbin</code></li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ wget http://tug.org/cgi-bin/mactex-download/MacTeX.pkg</span><br><span class="line"><span class="comment"># checksum and install MacTeX.pkg</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># assuming you are using zsh</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">'export PATH="$PATH:/Library/TeX/texbin"'</span> &gt;&gt; ~/.zshrc</span><br><span class="line"></span><br><span class="line"><span class="comment"># assuming you are using bash</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">'export PATH="$PATH:/Library/TeX/texbin"'</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
-
-<h3 id="Verify-it"><a href="#Verify-it" class="headerlink" title="Verify it"></a>Verify it</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">export</span> PATH=<span class="string">"<span class="variable">$PATH</span>:/Library/TeX/texbin"</span></span><br><span class="line">$ latex --version</span><br><span class="line">pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)</span><br><span class="line">kpathsea version 6.3.0</span><br><span class="line">Copyright 2018 Han The Thanh (pdfTeX) et al.</span><br><span class="line">There is NO warranty.  Redistribution of this software is</span><br><span class="line">covered by the terms of both the pdfTeX copyright and</span><br><span class="line">the Lesser GNU General Public License.</span><br><span class="line">For more information about these matters, see the file</span><br><span class="line">named COPYING and the pdfTeX <span class="built_in">source</span>.</span><br><span class="line">Primary author of pdfTeX: Han The Thanh (pdfTeX) et al.</span><br><span class="line">Compiled with libpng 1.6.34; using libpng 1.6.34</span><br><span class="line">Compiled with zlib 1.2.11; using zlib 1.2.11</span><br><span class="line">Compiled with xpdf version 4.00</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>random notes</category>
-      </categories>
-      <tags>
-        <tag>jupyter</tag>
-        <tag>pyenv</tag>
-        <tag>virtualenv</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>my HHKB and macOS setup</title>
-    <url>/my-hhkb-and-macos-setup/</url>
-    <content><![CDATA[<h1 id="Key-mapping"><a href="#Key-mapping" class="headerlink" title="Key mapping"></a>Key mapping</h1><blockquote>
-<p>几个月前，我从 <code>HHKB Lite2 for Mac</code>  切换到了  <code>HHKB Pro 2 Type-S</code>，方向键需要map成 <code>Ctrl + h/ j/ k/ l</code> ，参考了@zjun 的 <a href="http://www.zjunothing.com/2017/05/28/hhkb%E5%9F%BA%E6%9C%AC%E8%AE%BE%E7%BD%AE/" target="_blank" rel="noopener">best practise</a> ，用到了 <a href="http://www.hammerspoon.org/" target="_blank" rel="noopener">Hammerspoon</a>，这里记录一下配置。</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">~/.hammerspoon</span><br><span class="line">❯ cat init.lua</span><br></pre></td></tr></table></figure>
-
-
-
-<figure class="highlight lua"><table><tr><td class="code"><pre><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">pressFn</span><span class="params">(mods, key)</span></span></span><br><span class="line">	<span class="keyword">if</span> key == <span class="literal">nil</span> <span class="keyword">then</span></span><br><span class="line">		key = mods</span><br><span class="line">		mods = &#123;&#125;</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">function</span><span class="params">()</span></span> hs.eventtap.keyStroke(mods, key, <span class="number">1000</span>) <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">remap</span><span class="params">(mods, key, pressFn)</span></span></span><br><span class="line">	hs.hotkey.bind(mods, key, pressFn, <span class="literal">nil</span>, pressFn)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>&#125;, <span class="string">'h'</span>, pressFn(<span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>&#125;, <span class="string">'j'</span>, pressFn(<span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>&#125;, <span class="string">'k'</span>, pressFn(<span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>&#125;, <span class="string">'l'</span>, pressFn(<span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'shift'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'shift'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'shift'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'shift'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'cmd'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'cmd'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'cmd'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'cmd'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'alt'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'alt'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'alt'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'alt'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'right'</span>))</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>random notes</category>
-      </categories>
-      <tags>
-        <tag>HHKB</tag>
       </tags>
   </entry>
   <entry>
@@ -988,6 +988,45 @@
       </tags>
   </entry>
   <entry>
+    <title>Setup your ubuntu server in iPadOS with UTM</title>
+    <url>/setup-your-ubuntu-server-in-ipados-with-utm/</url>
+    <content><![CDATA[<p>This is the note on serving your Ubuntu server from iPadOS/ iOS with UTM, I am running 0.8 now.</p>
+<blockquote>
+<p>Download image</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Configure Password for the image, here we use chroot instead of config drive, the reason is at bottom.</p>
+</blockquote>
+<p>Use chroot to set password for the cloud image as follow:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$sudo</span> modprobe nbd max_part=1</span><br><span class="line"><span class="variable">$sudo</span> qemu-nbd --connect=/dev/nbd0 bionic-server-cloudimg-amd64.img</span><br><span class="line"><span class="variable">$mkdir</span> -p /mnt/nbd</span><br><span class="line"><span class="variable">$sudo</span> mount /dev/nbd0p1 /mnt/nbd/ -o noatime</span><br><span class="line"><span class="variable">$chroot</span> /mnt/nbd</span><br><span class="line">ubuntu<span class="comment"># passwd</span></span><br><span class="line">ubuntu<span class="comment"># exit</span></span><br><span class="line"><span class="variable">$sudo</span> qemu-nbd --disconnect /dev/nbd0</span><br><span class="line"><span class="variable">$sudo</span> umount /dev/nbd0p1</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<blockquote>
+<p>Use cloud drive is with ISSUES on UTM, as the nic mac address was fetched as <code>00:00:00:00</code> and it won’t proceed to configure the user data we put in the cloud drive…</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">RuntimeError Not all expected physical devices present 00:00:00:00</span><br></pre></td></tr></table></figure>
+
+<p>In case it worked someday, you could simply do it as follow:</p>
+<p>Let’s reuse the script created by Jan Walraven, ref: <a href="https://januz.nl/mac/generate-coreos-configdrive-iso-based-cloud-config-file" target="_blank" rel="noopener">here</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">brew install qemu coreutils cdrtools</span><br><span class="line">./createIso.sh --cloud-config cloud-config.yml --name user-data</span><br></pre></td></tr></table></figure>
+
+<p>Or in Debian</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install qemu-utils cloud-utils</span><br><span class="line"></span><br><span class="line">cat &gt; user-data &lt;&lt;EOF</span><br><span class="line"><span class="comment">#cloud-config</span></span><br><span class="line">users:</span><br><span class="line">  - default</span><br><span class="line">  - name: &lt;user&gt;</span><br><span class="line">    passwd: &lt;psw&gt;</span><br><span class="line">    ssh_pwauth: True</span><br><span class="line">    chpasswd: &#123; expire: False &#125;</span><br><span class="line">    sudo: ALL=(ALL) NOPASSWD:ALL</span><br><span class="line">    groups: users, admin</span><br><span class="line">    ssh_authorized_keys:</span><br><span class="line">      - ssh-rsa &lt;key&gt;</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">cloud-localds config_drive.iso user-data</span><br></pre></td></tr></table></figure>
+
+<p>Add above iso image to VM and mounted as a CD device, boot from your HDD device(the cloud image), it should configure yor password and ssh key as above user-data.</p>
+]]></content>
+      <categories>
+        <category>random notes</category>
+      </categories>
+      <tags>
+        <tag>iPadOS</tag>
+        <tag>UTM</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Setup Kolla-ansible OpenStack Cluster in Vagrant 2020</title>
     <url>/setup-kolla-ansible-openstack-cluster-in-vagrant-2020/</url>
     <content><![CDATA[<p>This is a note on setting up kolla ansible openstack develop envrionment in your working machine.</p>
@@ -1090,45 +1129,6 @@
       <tags>
         <tag>openstack</tag>
         <tag>vagrant</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Setup your ubuntu server in iPadOS with UTM</title>
-    <url>/setup-your-ubuntu-server-in-ipados-with-utm/</url>
-    <content><![CDATA[<p>This is the note on serving your Ubuntu server from iPadOS/ iOS with UTM, I am running 0.8 now.</p>
-<blockquote>
-<p>Download image</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>Configure Password for the image, here we use chroot instead of config drive, the reason is at bottom.</p>
-</blockquote>
-<p>Use chroot to set password for the cloud image as follow:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$sudo</span> modprobe nbd max_part=1</span><br><span class="line"><span class="variable">$sudo</span> qemu-nbd --connect=/dev/nbd0 bionic-server-cloudimg-amd64.img</span><br><span class="line"><span class="variable">$mkdir</span> -p /mnt/nbd</span><br><span class="line"><span class="variable">$sudo</span> mount /dev/nbd0p1 /mnt/nbd/ -o noatime</span><br><span class="line"><span class="variable">$chroot</span> /mnt/nbd</span><br><span class="line">ubuntu<span class="comment"># passwd</span></span><br><span class="line">ubuntu<span class="comment"># exit</span></span><br><span class="line"><span class="variable">$sudo</span> qemu-nbd --disconnect /dev/nbd0</span><br><span class="line"><span class="variable">$sudo</span> umount /dev/nbd0p1</span><br></pre></td></tr></table></figure>
-
-<a id="more"></a>
-
-<blockquote>
-<p>Use cloud drive is with ISSUES on UTM, as the nic mac address was fetched as <code>00:00:00:00</code> and it won’t proceed to configure the user data we put in the cloud drive…</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">RuntimeError Not all expected physical devices present 00:00:00:00</span><br></pre></td></tr></table></figure>
-
-<p>In case it worked someday, you could simply do it as follow:</p>
-<p>Let’s reuse the script created by Jan Walraven, ref: <a href="https://januz.nl/mac/generate-coreos-configdrive-iso-based-cloud-config-file" target="_blank" rel="noopener">here</a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">brew install qemu coreutils cdrtools</span><br><span class="line">./createIso.sh --cloud-config cloud-config.yml --name user-data</span><br></pre></td></tr></table></figure>
-
-<p>Or in Debian</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install qemu-utils cloud-utils</span><br><span class="line"></span><br><span class="line">cat &gt; user-data &lt;&lt;EOF</span><br><span class="line"><span class="comment">#cloud-config</span></span><br><span class="line">users:</span><br><span class="line">  - default</span><br><span class="line">  - name: &lt;user&gt;</span><br><span class="line">    passwd: &lt;psw&gt;</span><br><span class="line">    ssh_pwauth: True</span><br><span class="line">    chpasswd: &#123; expire: False &#125;</span><br><span class="line">    sudo: ALL=(ALL) NOPASSWD:ALL</span><br><span class="line">    groups: users, admin</span><br><span class="line">    ssh_authorized_keys:</span><br><span class="line">      - ssh-rsa &lt;key&gt;</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">cloud-localds config_drive.iso user-data</span><br></pre></td></tr></table></figure>
-
-<p>Add above iso image to VM and mounted as a CD device, boot from your HDD device(the cloud image), it should configure yor password and ssh key as above user-data.</p>
-]]></content>
-      <categories>
-        <category>random notes</category>
-      </categories>
-      <tags>
-        <tag>iPadOS</tag>
-        <tag>UTM</tag>
       </tags>
   </entry>
   <entry>

@@ -310,7 +310,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
-    <link itemprop="mainEntityOfPage" href="https://note.siwei.info/ML-2017-fall-HW1-note/">
+    <link itemprop="mainEntityOfPage" href="https://note.siwei.info/distributed-bugs-are-often-latent-a-troubleshoot-story/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/wey_pixel.png">
@@ -324,7 +324,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/ML-2017-fall-HW1-note/" class="post-title-link" itemprop="url">ML 2017 fall homework1 Linear Regression 笔记</a>
+            <a href="/distributed-bugs-are-often-latent-a-troubleshoot-story/" class="post-title-link" itemprop="url">Distributed bugs are often latent: a Troubleshoot Story</a>
         </h2>
 
         <div class="post-meta">
@@ -334,14 +334,132 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2018-05-28 00:31:07" itemprop="dateCreated datePublished" datetime="2018-05-28T00:31:07+08:00">2018-05-28</time>
+              <time title="Created: 2020-02-28 10:10:02" itemprop="dateCreated datePublished" datetime="2020-02-28T10:10:02+08:00">2020-02-28</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-07-03 22:15:30" itemprop="dateModified" datetime="2020-07-03T22:15:30+08:00">2020-07-03</time>
+                <time title="Modified: 2020-07-03 22:22:10" itemprop="dateModified" datetime="2020-07-03T22:22:10+08:00">2020-07-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index"><span itemprop="name">openstack</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>OpenStack, as a nested distributed system(where some of the subsystems are distributed systems), to troubleshoot on it could be quite tricky, not to mention its interdependence with other distributed systems in real word.</p>
+<p>We all share the feelings on how hard it is to solve a hidden issue in a distributed system as each call during a chain of invocation is unpredictable, the methods/ tools for sniffing/ tracking each part are either too hard, incapable, outside of control, or too expensive.</p>
+<p>The trigger made me composing this blog is the article: <a href="https://aws.amazon.com/builders-library/challenges-with-distributed-systems/" target="_blank" rel="noopener">Challenges with distributed systems</a> from <a href="https://twitter.com/jacobgabrielson" target="_blank" rel="noopener">Jacob Gabrielson</a>, where Jacob expounded how and why designing/ managing a request/response distributed system is challenging. I recommend to read it 😊. </p>
+<p>The story in this blog is a troubleshoot case I solved in a customer staging network years ago, where OpenStack clusters were integrated with some other different (virtual) Network Function clusters.</p>
+<h2 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h2><p>There were many OpenStack Clusters onsite, with different VNFs running on top of them. </p>
+<ul>
+<li><p>Two months before I arrived the customer site, the alarm <code>[NTP Upstream Server Failure]</code> was raised in one of the OpenStack Cluster.</p>
+</li>
+<li><p>Every party involved on this issue had looked into it jointly and each of them claimed they are all good: no clue to move on, and after the whole site’s yearly power down and up activity, the issue was gone. </p>
+</li>
+<li><p>One week ago, after a control plane nodes reboot, this alarm was raised again on another OpenStack Cluster.</p>
+</li>
+</ul>
+<p>Reviewing everything to have the pattern of the issue:</p>
+<ul>
+<li><p>There were two types of servers acted as upstream NTP for Openstack Clusters. Let’s say NTP-A and NTP-B, they were actually not dedicated NTP servers but a more heavy network function(NF):</p>
+<!--
+<img data-src="./distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_0.png" alt="NTP_Openstack_0" style="zoom:50%;" />
+-->
+<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_0.png" class="">
+
+<ul>
+<li>NTP-A was the one associated with the issue OpenStack Clusters, which was a VNF running in Linux.</li>
+<li>NTP-B was a native NF in Solaris, to be repalced by NTP-A in future. #Customer has reasons to worry the issue more 😜.</li>
+</ul>
+</li>
+<li><p>The OpenStack side claimed they were good because they captured the NTP client packet sent to NTP-A and no response recieved.</p>
+</li>
+<li><p>The other side checked everything around NTP configuration, network etc. nothing abnormal was sorted out. Thus they had to blame the OpenStack side as there were other systems utilizing their NTP-A as upstream NTP, while no issues had encounterred.</p>
+</li>
+<li><p>Then both side suspected the packet was dropped somehow between NTP-A and OpenStack Cluster: the networking/ switches.</p>
+<ul>
+<li>The switch team observed nothing pointing to packet drop from the traffic .</li>
+<li>Even though there was chance they didn’t capture the drop on right time, why only OpenStack’s NTP request not responded?</li>
+<li>Was this issue happening in small frequency?</li>
+</ul>
+</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/distributed-bugs-are-often-latent-a-troubleshoot-story/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
+    <link itemprop="mainEntityOfPage" href="https://note.siwei.info/jupyter-notes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/wey_pixel.png">
+      <meta itemprop="name" content="Wey Gu | 古思为">
+      <meta itemprop="description" content="I build things">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Siwei Notes">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/jupyter-notes/" class="post-title-link" itemprop="url">jupyter pyenv and virtualenv in macOS</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-03-27 14:53:50" itemprop="dateCreated datePublished" datetime="2019-03-27T14:53:50+08:00">2019-03-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-07-03 22:15:23" itemprop="dateModified" datetime="2020-07-03T22:15:23+08:00">2020-07-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -364,50 +482,210 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="Gradient-Descent-for-linear-regression-task"><a href="#Gradient-Descent-for-linear-regression-task" class="headerlink" title="Gradient Descent for linear regression task"></a>Gradient Descent for linear regression task</h1><h2 id="Data-pre-processing"><a href="#Data-pre-processing" class="headerlink" title="Data pre processing"></a>Data pre processing</h2><ul>
-<li>Load data from csv file to a list</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">trainDataList = list()</span><br><span class="line"><span class="keyword">with</span> open(<span class="string">"train.csv"</span>, newline=<span class="string">""</span>) <span class="keyword">as</span> csvfile:</span><br><span class="line">    trainData = csv.reader(csvfile, delimiter=<span class="string">","</span>,quotechar=<span class="string">"|"</span>)</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> trainData:</span><br><span class="line">        trainDataList.append(line[<span class="number">3</span>:])</span><br></pre></td></tr></table></figure>
+          <blockquote>
+<p>Conbined with <code>pyenv</code>  <code>virtualenv</code> and <code>Jupyter kernal specification</code>, we could have different versions of project-specific python wrapper as below.</p>
+<p>This article includes needed information on enabling this.</p>
+</blockquote>
+<h1 id="pyenv"><a href="#pyenv" class="headerlink" title="pyenv"></a>pyenv</h1><blockquote>
+<p>ref: <a href="https://github.com/pyenv/pyenv/issues/1219" target="_blank" rel="noopener">https://github.com/pyenv/pyenv/issues/1219</a></p>
+</blockquote>
+<p><code>zlib not available</code>, one thing to highlight is to enable zlib, we have to do this:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xcode-select --install</span><br><span class="line">sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /</span><br></pre></td></tr></table></figure>
 
+<p>Below are things we need to ensure pyenv magically modified our enviroment variables to point specific version of python.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ brew install pyenv</span><br><span class="line">$ <span class="built_in">cd</span> &lt;project_path&gt;</span><br><span class="line">$ pyenv install 3.6.8</span><br><span class="line">$ pyenv <span class="built_in">local</span> 3.6.8</span><br><span class="line">$ pyenv init</span><br><span class="line"><span class="comment"># Load pyenv automatically by appending</span></span><br><span class="line"><span class="comment"># the following to ~/.zshrc:</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">eval</span> <span class="string">"<span class="variable">$(pyenv init -)</span>"</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">which</span> python</span><br><span class="line">/usr/<span class="built_in">local</span>/bin/python</span><br><span class="line">$ <span class="built_in">eval</span> <span class="string">"<span class="variable">$(pyenv init -)</span>"</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">which</span> python</span><br><span class="line">/Users/&lt;user&gt;/.pyenv/shims/python</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="jupyter-IPython-kernel-management"><a href="#jupyter-IPython-kernel-management" class="headerlink" title="jupyter/IPython kernel management"></a>jupyter/IPython kernel management</h2><blockquote>
+<p>ref: <a href="https://ipython.readthedocs.io/en/latest/install/kernel_install.html" target="_blank" rel="noopener">https://ipython.readthedocs.io/en/latest/install/kernel_install.html</a></p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ jupyter kernelspec list</span><br><span class="line">Available kernels:</span><br><span class="line">  python3    /usr/<span class="built_in">local</span>/share/jupyter/kernels/python3</span><br><span class="line"></span><br><span class="line">$ python -m virtualenv py36</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">source</span> py36/bin/activate</span><br><span class="line"></span><br><span class="line">$ pip install ipykernel</span><br><span class="line"></span><br><span class="line">$ python -m ipykernel install --user --name py36 --display-name <span class="string">"ProjectName py36"</span></span><br><span class="line"></span><br><span class="line">$ jupyter kernelspec list</span><br><span class="line">Available kernels:</span><br><span class="line">  py36       /Users/&lt;user&gt;/Library/Jupyter/kernels/py36</span><br><span class="line">  python3    /usr/<span class="built_in">local</span>/share/jupyter/kernels/python3</span><br></pre></td></tr></table></figure>
+
+<p>Then, from the jupyter notebook webpage, you could select kernels from <code>Kernel: Change Kernel</code></p>
+<h2 id="matplotlib-calling-latex-failed-on-macOS"><a href="#matplotlib-calling-latex-failed-on-macOS" class="headerlink" title="matplotlib calling latex failed on macOS"></a><code>matplotlib</code> calling <code>latex</code> failed on macOS</h2><blockquote>
+<p>plot call failed due to latex could not be invoked</p>
+</blockquote>
+<h3 id="Root-cause"><a href="#Root-cause" class="headerlink" title="Root cause"></a>Root cause</h3><p>LaTeX was not installed or cannot be called from<code>latex</code></p>
+<h3 id="Minimal-reproducing"><a href="#Minimal-reproducing" class="headerlink" title="Minimal reproducing"></a>Minimal reproducing</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; import subprocess; subprocess.check_call(<span class="string">"latex"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># FileNotFoundError: [Errno 2] No such file or directory: 'latex': 'latex'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># or from shell</span></span><br><span class="line"></span><br><span class="line">$ latex</span><br><span class="line"><span class="comment"># latex not found</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Fix"><a href="#Fix" class="headerlink" title="Fix"></a>Fix</h3><ul>
+<li>install Tex Live for macOS</li>
+<li>append <code>PATH</code> for <code>/Library/TeX/texbin</code></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ wget http://tug.org/cgi-bin/mactex-download/MacTeX.pkg</span><br><span class="line"><span class="comment"># checksum and install MacTeX.pkg</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># assuming you are using zsh</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">'export PATH="$PATH:/Library/TeX/texbin"'</span> &gt;&gt; ~/.zshrc</span><br><span class="line"></span><br><span class="line"><span class="comment"># assuming you are using bash</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">'export PATH="$PATH:/Library/TeX/texbin"'</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<h3 id="Verify-it"><a href="#Verify-it" class="headerlink" title="Verify it"></a>Verify it</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">export</span> PATH=<span class="string">"<span class="variable">$PATH</span>:/Library/TeX/texbin"</span></span><br><span class="line">$ latex --version</span><br><span class="line">pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)</span><br><span class="line">kpathsea version 6.3.0</span><br><span class="line">Copyright 2018 Han The Thanh (pdfTeX) et al.</span><br><span class="line">There is NO warranty.  Redistribution of this software is</span><br><span class="line">covered by the terms of both the pdfTeX copyright and</span><br><span class="line">the Lesser GNU General Public License.</span><br><span class="line">For more information about these matters, see the file</span><br><span class="line">named COPYING and the pdfTeX <span class="built_in">source</span>.</span><br><span class="line">Primary author of pdfTeX: Han The Thanh (pdfTeX) et al.</span><br><span class="line">Compiled with libpng 1.6.34; using libpng 1.6.34</span><br><span class="line">Compiled with zlib 1.2.11; using zlib 1.2.11</span><br><span class="line">Compiled with xpdf version 4.00</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
+    <link itemprop="mainEntityOfPage" href="https://note.siwei.info/project-resource-board-a-scalable-webapp-with-flask-socketio-and-vue-js/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/wey_pixel.png">
+      <meta itemprop="name" content="Wey Gu | 古思为">
+      <meta itemprop="description" content="I build things">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Siwei Notes">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/project-resource-board-a-scalable-webapp-with-flask-socketio-and-vue-js/" class="post-title-link" itemprop="url">Project Resource Board: a scalable webapp with Flask socketio and Vue.js</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-02-16 22:27:28" itemprop="dateCreated datePublished" datetime="2019-02-16T22:27:28+08:00">2019-02-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-07-04 10:56:13" itemprop="dateModified" datetime="2020-07-04T10:56:13+08:00">2020-07-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/build-notes/" itemprop="url" rel="index"><span itemprop="name">build notes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <img data-src="/project-resource-board-a-scalable-webapp-with-flask-socketio-and-vue-js/arch_diagram_0.png" class="">
+
+<h1 id="关于"><a href="#关于" class="headerlink" title="关于"></a>关于</h1><p>我在做一个叫做 resource board的 side project， 它是一个方便团队协作中使用共享资源的web app。</p>
+<p>本文是我在写第一个发布版本之前持续更新的记录。</p>
+<blockquote>
+<p>updated in <code>2019-April-6</code></p>
+<p>以单体架构先实现了可用的版本，部署在公司内网给项目使用上了，也公布一下代码：</p>
+<p><a href="https://github.com/wey-gu/resource-board" target="_blank" rel="noopener">https://github.com/wey-gu/resource-board</a></p>
+<p>之后我会花时间迭代下去，不过现在课余时间在做一个机器学习调优的项目，这个优先级只能降低。</p>
+</blockquote>
+<h1 id="缘起"><a href="#缘起" class="headerlink" title="缘起"></a>缘起</h1><blockquote>
+<p>为什么开始</p>
+</blockquote>
+<p>在云计算研发部门搬砖半年，一直做一些很小的feature开发，连着几个月早出晚归加上牺牲周末时间的赶进度让我内心很不平静。我需要做点什么，因为本质上我热爱的是 <code>build things</code>，做一个<code>proper side project</code> 的主意在脑子里转了好久了，我决定先做一个简单的东西出来。</p>
+<p>这个东西就是一个 <code>resource board</code> 。</p>
+<blockquote>
+<p>学到什么</p>
+</blockquote>
+<p><code>resourece borard</code> 是我起的名字，其实就是一份在线的表格、面板，本质上用 <code>O365</code> / <code>onedrive for business</code> 完全可以实现类似的功效。不过我还是想造这样一个轮子，涉及一下产品开发的全生命周期的从无到有的创造、学习、实践：</p>
 <ul>
-<li><p>make all train data in one list, to enable iterating per hour of the list, thus, we have <code>(24 * days - 10 + 1)</code> training data.</p>
-<p><code>trainDataIteratedPerHour: list()</code></p>
+<li>planning, prototyping</li>
+<li>architecture</li>
+<li>front end</li>
+<li>back end</li>
+<li>CI/ CD</li>
+<li>maintenance</li>
+<li>refactoring<ul>
+<li>for test</li>
+<li>for scale</li>
+</ul>
+</li>
+<li>tuning</li>
+</ul>
+<blockquote>
+<p>User story of resource board</p>
+</blockquote>
+<p><code>resource board</code> 主要解决异地团队协作中对共享资源使用的问题，它是一个电子化的资源使用白板。</p>
+<p>试想一下没有资源占用白板的时候，团队里的人共享10个虚拟化数据中心，我们简称 <code>DC</code> ，对于它的使用分几个场景：</p>
+<ul>
+<li>CI <ul>
+<li>被CI占用，没有再触发CI调用它的人不可以干预</li>
+</ul>
+</li>
+<li>testing<ul>
+<li>被非独占式的人使用中，特定的人可以并行使用它，（理想情况下）不会干扰到彼此</li>
+</ul>
+</li>
+<li>occupied<ul>
+<li>被人独占使用，不可与别人共享</li>
+</ul>
+</li>
+<li>free<ul>
+<li>任何人可以使用它，或者挪作其他用途</li>
+</ul>
 </li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># n lines to be one day</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mod_18</span><span class="params">(n)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> n % <span class="number">18</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># transpose a matrix(2D list)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">T_list</span><span class="params">(l)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> np.array(l).T.tolist()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">i = <span class="number">0</span></span><br><span class="line">trainDataIteratedPerHour = []</span><br><span class="line">listToAppend = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> trainDataList[<span class="number">1</span>:]:</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> mod_18(i):</span><br><span class="line">        <span class="comment"># from mod 10: 0</span></span><br><span class="line">        listToAppend = [item]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">elif</span> mod_18(i) == <span class="number">10</span>:</span><br><span class="line">        <span class="comment"># rain, consider "NR" = 0</span></span><br><span class="line">        listToAppend.append([<span class="string">"0"</span> <span class="keyword">if</span> x == <span class="string">'NR'</span> <span class="keyword">else</span> x <span class="keyword">for</span> x <span class="keyword">in</span> item])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">elif</span> mod_18(i) == <span class="number">17</span>:</span><br><span class="line">        <span class="comment"># all 18 lines collected, built a set of data to extend</span></span><br><span class="line">        listToAppend.append(item)</span><br><span class="line">        trainDataIteratedPerHour.extend(T_list(listToAppend))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># append other data</span></span><br><span class="line">        listToAppend.append(item)</span><br><span class="line">    i = i + <span class="number">1</span></span><br><span class="line"></span><br><span class="line">i = <span class="number">0</span></span><br></pre></td></tr></table></figure>
-
+<p>这种情况下，使用它的A同学需要站起来告诉所有人，或者群发邮件，说我要用 <code>DC123</code> 独占调试一个代码，有人在用么？ 10分钟后，在注意到没人回复的情况下，ta就在 <code>DC123</code>上开始<del>做坏事</del> 调试ta的代码了。然而刚从厕所回来的B同学，却发现ta的环境被破坏了，半天白忙活了😢。</p>
+<p>如果这个资源共享的工作方式之中引入了记录资源占用情况的白板，A同学只需要看一下白板上空闲的DC，发现<code>DC125</code> 可以使用，他可以做到：</p>
 <ul>
-<li>build <code>x_data</code> and <code>y_data</code></li>
+<li>无需等待确认广播信息的回复立刻使用 <code>DC125</code></li>
+<li>不会破坏任何被占用的资源环境比如 <code>DC123</code> </li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">build x_data and y_data</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"></span><br><span class="line">x_data = [] <span class="comment"># 18*9 dimensions</span></span><br><span class="line">y_data = [] <span class="comment"># scalar, pm2.5 of next hour for x_data</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> range(len(trainDataIteratedPerHour) - <span class="number">10</span>):</span><br><span class="line">    x_data.extend(np.array(trainDataIteratedPerHour[n : n + <span class="number">9</span>]).reshape(<span class="number">1</span>,<span class="number">162</span>).tolist())</span><br><span class="line">    y_data.append(trainDataIteratedPerHour[n + <span class="number">10</span>][<span class="number">9</span>])</span><br><span class="line"></span><br><span class="line">x_data = [[float(j) <span class="keyword">for</span> j <span class="keyword">in</span> i] <span class="keyword">for</span> i <span class="keyword">in</span> x_data]</span><br><span class="line">y_data = [float(i) <span class="keyword">for</span> i <span class="keyword">in</span> y_data]</span><br></pre></td></tr></table></figure>
-
+<p>看起来比较自然。</p>
+<h1 id="Planning"><a href="#Planning" class="headerlink" title="Planning"></a>Planning</h1><h2 id="关键点"><a href="#关键点" class="headerlink" title="关键点"></a>关键点</h2><ul>
+<li>数字化白板应该是一个Wep App</li>
+<li>它需要是实时的<ul>
+<li>支持面向连接的(server —&gt; client)</li>
+</ul>
+</li>
+<li>可扩展，可扩容<ul>
+<li>后端<ul>
+<li>只做api</li>
+<li>分布式，可scale up</li>
+</ul>
+</li>
+<li>前端<ul>
+<li>single page client</li>
+<li>websocket</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="简单原型"><a href="#简单原型" class="headerlink" title="简单原型"></a>简单原型</h2><p>我用Balsamiq Mockups 简单做了一个原型：</p>
 <ul>
-<li>draw plot (to feel the range of the data)</li>
+<li>用卡片表示每一个资源的信息</li>
+<li>不同的section表示资源被使用的状态，或者分类</li>
+<li>提供面向资源的历史查看页面</li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># draw plot of pm2.5 range?</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">x = range(len(y_data))</span><br><span class="line">y = np.array(y_data)</span><br><span class="line"><span class="comment"># refer to https://matplotlib.org/2.2.2/gallery/lines_bars_and_markers/simple_plot.html</span></span><br><span class="line"></span><br><span class="line">fig, ax = plt.subplots()</span><br><span class="line">ax.plot(x, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># plt.show()</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="Loss-function"><a href="#Loss-function" class="headerlink" title="Loss function"></a>Loss function</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">lossFunction</span><span class="params">(w, x_data, y_data)</span>:</span></span><br><span class="line">    w = np.array(w)</span><br><span class="line">    x_data = np.array(x_data)</span><br><span class="line">    result = <span class="number">0.</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(y_data)):</span><br><span class="line">        result += (y_data[i] - sum(w * x_data[i]))**<span class="number">2</span></span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"><span class="comment"># w = [0.01] * 162</span></span><br><span class="line"><span class="comment"># L = lossFunction(w,x_data,y_data)</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="Iterations-for-grident-descent"><a href="#Iterations-for-grident-descent" class="headerlink" title="Iterations for grident descent"></a>Iterations for grident descent</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Iterations</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">iterationRun</span><span class="params">(lr,iteration,x_data,y_data)</span>:</span></span><br><span class="line">    <span class="comment"># initial data</span></span><br><span class="line">    w = [<span class="number">0.01</span>] * <span class="number">162</span></span><br><span class="line">    L_history = [lossFunction(w,x_data,y_data)]</span><br><span class="line"></span><br><span class="line">    w = np.array(w)</span><br><span class="line">    x_data = np.array(x_data)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> iterator <span class="keyword">in</span> range(iteration):</span><br><span class="line">        <span class="comment"># initialize w_grad</span></span><br><span class="line">        w_grad = [<span class="number">0.0</span>] * <span class="number">162</span></span><br><span class="line">        <span class="comment"># sum of all training data set</span></span><br><span class="line">        <span class="keyword">for</span> n <span class="keyword">in</span> range(len(y_data)):</span><br><span class="line">            <span class="comment"># per feature</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">162</span>):</span><br><span class="line">                w_grad[i] = w_grad[i] - <span class="number">2.0</span> * x_data[n][i] * ( sum(w * x_data[n]) - y_data[n] )</span><br><span class="line"></span><br><span class="line">        <span class="comment"># update w</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">162</span>):</span><br><span class="line">            w[i] = w[i] + lr * w_grad[i]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># store Loss Function hisotry for plotting</span></span><br><span class="line">        L_history.append(lossFunction(w,x_data,y_data))</span><br><span class="line">        <span class="keyword">print</span> (str(iterator) + <span class="string">" : "</span> + str(datetime.datetime.now().time()) + <span class="string">" L:"</span> + str(L_history[<span class="number">-1</span>]))</span><br><span class="line">    <span class="keyword">return</span> L_history</span><br></pre></td></tr></table></figure>
-
-<p>Run it for 10 iterations</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">lr = <span class="number">0.0000000000001</span> <span class="comment"># learning rate</span></span><br><span class="line">iteration = <span class="number">10</span></span><br><span class="line">iterationRun(lr,iteration,x_data,y_data)</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="Tunning"><a href="#Tunning" class="headerlink" title="Tunning"></a>Tunning</h2><h3 id="Find-good-initial-learning-rate"><a href="#Find-good-initial-learning-rate" class="headerlink" title="Find good initial learning rate"></a>Find good initial learning rate</h3><p>start with <code>lr = 0.0000000000001</code></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">19</span>]: lr = <span class="number">0.0000000000001</span> <span class="comment"># learning rate</span></span><br><span class="line">    ...: iteration = <span class="number">10</span></span><br><span class="line">    ...: iterationRun(lr,iteration,x_data,y_data)</span><br><span class="line">    ...:</span><br><span class="line"><span class="number">0</span> : <span class="number">13</span>:<span class="number">21</span>:<span class="number">22.227145</span> L:<span class="number">5897161.869645979</span></span><br><span class="line"><span class="number">1</span> : <span class="number">13</span>:<span class="number">21</span>:<span class="number">53.988814</span> L:<span class="number">5890818.193569232</span></span><br><span class="line"><span class="number">2</span> : <span class="number">13</span>:<span class="number">22</span>:<span class="number">25.639150</span> L:<span class="number">5884483.073933817</span></span><br><span class="line"><span class="number">3</span> : <span class="number">13</span>:<span class="number">22</span>:<span class="number">57.211950</span> L:<span class="number">5878156.49918669</span></span><br><span class="line"><span class="number">4</span> : <span class="number">13</span>:<span class="number">23</span>:<span class="number">28.873442</span> L:<span class="number">5871838.457790465</span></span><br><span class="line"><span class="number">5</span> : <span class="number">13</span>:<span class="number">24</span>:<span class="number">01.059230</span> L:<span class="number">5865528.93822318</span></span><br></pre></td></tr></table></figure>
-
-<p>hmmm… try greater lr</p>
-<p><code>lr = 0.00000000001</code></p>
-<p>The loss function is descenting faster, like around 60000 per epoch.</p>
+<p>我没有花更多时间去画更详细的原型图，只是在画这个初始的版本的过程中引导我思考我初始的数据schema，前后端最开始要做的事情，一旦雏形确定下来，我就直接进入前后端的开发，在开发中直接实现业务逻辑的进化。</p>
+<blockquote>
+<p> 这里是我截取的原型图的demo动画 😁</p>
+</blockquote>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/ML-2017-fall-HW1-note/#more" rel="contents">
+              <a class="btn" href="/project-resource-board-a-scalable-webapp-with-flask-socketio-and-vue-js/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -430,7 +708,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
