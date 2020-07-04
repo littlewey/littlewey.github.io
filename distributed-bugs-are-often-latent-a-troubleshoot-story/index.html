@@ -21,14 +21,14 @@
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"note.siwei.info","root":"/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"note.siwei.info","root":"/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="AbstractOpenStack, as a nested distributed system(where some of the subsystems are distributed systems), to troubleshoot on it could be quite tricky, not to mention its interdependence with other dist">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Distributed bugs are often latent: a Troubleshoot Story">
 <meta property="og:url" content="https://note.siwei.info/distributed-bugs-are-often-latent-a-troubleshoot-story/index.html">
-<meta property="og:site_name" content="Siwei notes">
+<meta property="og:site_name" content="Siwei Notes">
 <meta property="og:description" content="AbstractOpenStack, as a nested distributed system(where some of the subsystems are distributed systems), to troubleshoot on it could be quite tricky, not to mention its interdependence with other dist">
 <meta property="og:image" content="https://note.siwei.info/distributed-bugs-are-often-latent-a-troubleshoot-story/distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_0.png">
 <meta property="og:image" content="https://note.siwei.info/distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_0.png">
@@ -65,7 +65,7 @@
   };
 </script>
 
-  <title>Distributed bugs are often latent: a Troubleshoot Story | Siwei notes</title>
+  <title>Distributed bugs are often latent: a Troubleshoot Story | Siwei Notes</title>
   
 
 
@@ -129,7 +129,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">Siwei notes</h1>
+      <h1 class="site-title">Siwei Notes</h1>
       <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">思为笔记</p>
@@ -251,7 +251,7 @@
     <img class="site-author-image" itemprop="image" alt="Wey Gu | 古思为"
       src="/images/wey_pixel.png">
   <p class="site-author-name" itemprop="name">Wey Gu | 古思为</p>
-  <div class="site-description" itemprop="description">Build things.</div>
+  <div class="site-description" itemprop="description">I build things</div>
 </div>
 <div class="site-state-wrap animated">
   <nav class="site-state">
@@ -336,11 +336,11 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/wey_pixel.png">
       <meta itemprop="name" content="Wey Gu | 古思为">
-      <meta itemprop="description" content="Build things.">
+      <meta itemprop="description" content="I build things">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Siwei notes">
+      <meta itemprop="name" content="Siwei Notes">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -401,9 +401,9 @@
 <ul>
 <li><p>There were two types of servers acted as upstream NTP for Openstack Clusters. Let’s say NTP-A and NTP-B, they were actually not dedicated NTP servers but a more heavy network function(NF):</p>
 <!--
-<img src="./distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_0.png" alt="NTP_Openstack_0" style="zoom:50%;" />
+<img data-src="./distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_0.png" alt="NTP_Openstack_0" style="zoom:50%;" />
 -->
-<img src="/distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_0.png" class="">
+<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_0.png" class="">
 
 <ul>
 <li>NTP-A was the one associated with the issue OpenStack Clusters, which was a VNF running in Linux.</li>
@@ -431,18 +431,18 @@
 <p>note, in this OpenStack Cluster, the control-plane nodes were VMs hosted by cpn hypervisor node</p>
 </blockquote>
 <!--
-<img src="./distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_OS_to_external_NTP.png" alt="NTP_Openstack_OS_to_external_NTP" style="zoom:60%;" />
+<img data-src="./distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_OS_to_external_NTP.png" alt="NTP_Openstack_OS_to_external_NTP" style="zoom:60%;" />
 -->
-<img src="/distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_OS_to_external_NTP.png" class="">
+<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_OS_to_external_NTP.png" class="">
 
 <p>And let’s check NTP stats from the cpn hypervisor node, from below we could tell the [NTP server side packet not being recieved] frequency was hard to say small: in last <code>256 * 8</code> seconds of the moment, 3 of 8 NTP polling hadn’t get responded packet. By checking the alarm triggerring code, it’s found only after more than 1800 seconds a upstream NTP server not responding, a alarm will be raised, which is a slightly high threhold.</p>
 <blockquote>
 <p>note, please refer to <strong><a href="#Appendix">Appendix: <code>ntpd -pn</code> explained</a></strong> on how we get this information from below printout.</p>
 </blockquote>
 <!--  
-<img src="./distributed-bugs-are-often-latent-a-troubleshoot-story/ntpq_cpn_hypervisor.png" alt="ntpq_cpn_hypervisor" style="zoom:70%;" />
+<img data-src="./distributed-bugs-are-often-latent-a-troubleshoot-story/ntpq_cpn_hypervisor.png" alt="ntpq_cpn_hypervisor" style="zoom:70%;" />
 -->
-<img src="/distributed-bugs-are-often-latent-a-troubleshoot-story/ntpq_cpn_hypervisor.png" class="">
+<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/ntpq_cpn_hypervisor.png" class="">
 <p>It’s a good sign to know this issue was actually easier to have the minimum reproduction: just query it directly from cpn hypervisor node, and, it’s in high frequency(easy to repoduce). </p>
 <p>Then we have below questions:</p>
 <ul>
@@ -451,9 +451,9 @@
 </ul>
 <p>With above questions, I looked into the above blue circle between cpn hypervisor node and external NTP. The external NTP server is only reachable from OaM Network, under the hood cpn hypervisor node actually reached external NTP-A via a vRouter running inside cpn. That is, the last path of above blue circle is actually this orange circle below, aka, not from cpn hypervisor node itself.</p>
 <!--
-<img src="distributed-bugs-are-often-latent-a-troubleshoot-story/vrouter_to_external_NTP.png" alt="vrouter_to_external_NTP" style="zoom:67%;" />
+<img data-src="distributed-bugs-are-often-latent-a-troubleshoot-story/vrouter_to_external_NTP.png" alt="vrouter_to_external_NTP" style="zoom:67%;" />
 --> 
-<img src="/distributed-bugs-are-often-latent-a-troubleshoot-story/vrouter_to_external_NTP.png" class="">
+<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/vrouter_to_external_NTP.png" class="">
 
 <p>With above knowledge, packet from its cpn vRouter was captured:</p>
 <p>By checking the packet with <code>no.482</code>, whose client NTP call was not responded(others around it got responded), something intresting was found:</p>
@@ -461,7 +461,7 @@
 <li>The Source Port of this packet is not the well-known <code>123</code> port, instead, it’s <code>108</code>.</li>
 <li>For those got resonped in this cluster, they are in source port <code>123</code>.</li>
 </ul>
-<img src="/distributed-bugs-are-often-latent-a-troubleshoot-story/tcpdump_vrouter_ntp.png" class="">
+<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/tcpdump_vrouter_ntp.png" class="">
 
 <p>This was something close to the turth, still more questions to answer😀:</p>
 <ul>
@@ -496,7 +496,7 @@
 <!--  
 ![ntpd_bug_diff](distributed-bugs-are-often-latent-a-troubleshoot-story/ntpd_bug_diff.png)
 -->
-<img src="/distributed-bugs-are-often-latent-a-troubleshoot-story/ntpd_bug_diff.png" class="">
+<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/ntpd_bug_diff.png" class="">
 
 <h2 id="TLDR"><a href="#TLDR" class="headerlink" title="TLDR;"></a>TLDR;</h2><p>Then I asked the NTP-A administorator to confirm the ntpd version, it was 4.2.7😜. </p>
 <p>The solution will be: upgrade nptd from NTP-A.</p>
@@ -524,9 +524,9 @@
 </li>
 </ul>
 <!--
-<img src="distributed-bugs-are-often-latent-a-troubleshoot-story/appendix_ntpq_stats.png" alt="appendix_ntpq_stats" style="zoom:70%;" />
+<img data-src="distributed-bugs-are-often-latent-a-troubleshoot-story/appendix_ntpq_stats.png" alt="appendix_ntpq_stats" style="zoom:70%;" />
 --> 
-<img src="/distributed-bugs-are-often-latent-a-troubleshoot-story/appendix_ntpq_stats.png" class="">
+<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/appendix_ntpq_stats.png" class="">
 
     </div>
 
@@ -647,6 +647,7 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
 
 <script src="/js/utils.js"></script>
 

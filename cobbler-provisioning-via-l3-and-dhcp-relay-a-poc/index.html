@@ -21,14 +21,14 @@
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"note.siwei.info","root":"/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"note.siwei.info","root":"/","scheme":"Gemini","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="Enable cobbler provisioning via L3 DHCP relayI would like to setup a minimal PoC for Cobbler provisioning via DHCP relay, I will use virtualbox to spawn: Three VMs:  Cobbler server in subnet A, let’s">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Cobbler provisioning via L3 and DHCP Relay, a PoC">
 <meta property="og:url" content="https://note.siwei.info/cobbler-provisioning-via-l3-and-dhcp-relay-a-poc/index.html">
-<meta property="og:site_name" content="Siwei notes">
+<meta property="og:site_name" content="Siwei Notes">
 <meta property="og:description" content="Enable cobbler provisioning via L3 DHCP relayI would like to setup a minimal PoC for Cobbler provisioning via DHCP relay, I will use virtualbox to spawn: Three VMs:  Cobbler server in subnet A, let’s">
 <meta property="og:image" content="https://note.siwei.info/cobbler-provisioning-via-l3-and-dhcp-relay-a-poc/DHCP.png">
 <meta property="og:image" content="https://note.siwei.info/cobbler-provisioning-via-l3-and-dhcp-relay-a-poc/PXE_boot.png">
@@ -55,7 +55,7 @@
   };
 </script>
 
-  <title>Cobbler provisioning via L3 and DHCP Relay, a PoC | Siwei notes</title>
+  <title>Cobbler provisioning via L3 and DHCP Relay, a PoC | Siwei Notes</title>
   
 
 
@@ -119,7 +119,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">Siwei notes</h1>
+      <h1 class="site-title">Siwei Notes</h1>
       <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">思为笔记</p>
@@ -241,7 +241,7 @@
     <img class="site-author-image" itemprop="image" alt="Wey Gu | 古思为"
       src="/images/wey_pixel.png">
   <p class="site-author-name" itemprop="name">Wey Gu | 古思为</p>
-  <div class="site-description" itemprop="description">Build things.</div>
+  <div class="site-description" itemprop="description">I build things</div>
 </div>
 <div class="site-state-wrap animated">
   <nav class="site-state">
@@ -326,11 +326,11 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/wey_pixel.png">
       <meta itemprop="name" content="Wey Gu | 古思为">
-      <meta itemprop="description" content="Build things.">
+      <meta itemprop="description" content="I build things">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Siwei notes">
+      <meta itemprop="name" content="Siwei Notes">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -480,15 +480,15 @@
 <blockquote>
 <p>screen captured for machine_0</p>
 </blockquote>
-<p><img src="./DHCP.png" alt="DHCP"></p>
-<p><img src="./PXE_boot.png" alt="PXE_boot"></p>
+<p><img data-src="./DHCP.png" alt="DHCP"></p>
+<p><img data-src="./PXE_boot.png" alt="PXE_boot"></p>
 <h3 id="Issue-notes"><a href="#Issue-notes" class="headerlink" title="Issue notes"></a>Issue notes</h3><ol>
 <li><p>I tried to complie cobbler in Ubuntu 18.04 while failed in several phases, to save time switched to epel-release build Cobbler binary package in CentOS 7</p>
 </li>
 <li><p>default vNIC type not working properly on tftp, corrected for machine_0</p>
 </li>
 <li><p>dhcp server configuration, I shouldn’t have put DHCP for subnet A(was removed already), in which case,  machine_0 will be with IP address from subnet A while gateway in subnet B and it led L3 network failure, see below failure:</p>
-<p><img src="./L3_failure_after_DHCP.png" alt="L3_failure_after_HDCP"></p>
+<p><img data-src="./L3_failure_after_DHCP.png" alt="L3_failure_after_HDCP"></p>
 </li>
 </ol>
 
@@ -610,6 +610,7 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
 
 <script src="/js/utils.js"></script>
 
