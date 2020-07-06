@@ -262,7 +262,7 @@
         <a href="https://github.com/wey-gu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wey-gu" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="mailto:littlewey@gmail.com" title="E-Mail → mailto:littlewey@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+        <a href="mailto:weyl.gu@gmail.com" title="E-Mail → mailto:weyl.gu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="https://weibo.com/siweigu" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;siweigu" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i></a>
@@ -271,10 +271,10 @@
         <a href="https://twitter.com/wey_gu" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;wey_gu" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://www.facebook.com/littlewey" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;littlewey" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i></a>
+        <a href="https://www.facebook.com/Weyl.GU" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;Weyl.GU" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://instagram.com/littlewey" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;littlewey" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i></a>
+        <a href="https://instagram.com/siwei.gu" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;siwei.gu" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i></a>
       </span>
   </div>
   <div class="cc-license animated" itemprop="license">
@@ -342,7 +342,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-07-03 22:22:26" itemprop="dateModified" datetime="2020-07-03T22:22:26+08:00">2020-07-03</time>
+                <time title="Modified: 2020-07-06 20:07:48" itemprop="dateModified" datetime="2020-07-06T20:07:48+08:00">2020-07-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -370,7 +370,7 @@
 <p>I had done this in 2020 May on my old mac mini with Catalina ;-). With 20 GiB disk and 6GiB RAM assigned to one Vagrant spawned (virtualbox), the OpenStack Cluster is running pretty well, comparing to my previous setups ( multi-VMs based manually deployment and VM based Mirantis Fuel 9.0 deployment), it’s obviously more reponsive with the help of the single node setup.</p>
 <p>Here I leave the notes as a reference for you to have a playground easier.</p>
 <h2 id="Preparation"><a href="#Preparation" class="headerlink" title="Preparation"></a>Preparation</h2><h3 id="Install-vagrant-and-plugins-needed"><a href="#Install-vagrant-and-plugins-needed" class="headerlink" title="Install vagrant and plugins needed"></a>Install vagrant and plugins needed</h3><p>Below is an example to do this on a macOS machine, to do that from other OS, refer to <a href="https://www.vagrantup.com/docs/installation/" target="_blank" rel="noopener">here</a></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">brew cask install virtualbox vagrant</span><br><span class="line"></span><br><span class="line">vagrant plugin install vagrant-hostmanager vagrant-vbguest</span><br><span class="line"></span><br><span class="line"><span class="comment"># if we need to resize disks after vagrant up</span></span><br><span class="line">vagrant plugin install vagrant-disksize</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">brew cask install virtualbox vagrant</span><br><span class="line"></span><br><span class="line">vagrant plugin install vagrant-hostmanager vagrant-vbguest</span><br><span class="line"></span><br><span class="line"><span class="comment"># if we need to resize disks after vagrant up</span></span><br><span class="line">vagrant plugin install vagrant-disksize</span><br><span class="line"><span class="comment"># if we need to make vagrant VM behind a proxy</span></span><br><span class="line">vagrant plugin install vagrant-proxyconf</span><br></pre></td></tr></table></figure>
 
 <h3 id="Clone-kolla-repo"><a href="#Clone-kolla-repo" class="headerlink" title="Clone kolla repo"></a>Clone kolla repo</h3><p>We need to clone below three repositories.</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://opendev.org/openstack/kolla-cli</span><br><span class="line">git <span class="built_in">clone</span> https://opendev.org/openstack/kolla-ansible</span><br><span class="line">git <span class="built_in">clone</span> https://opendev.org/openstack/kolla</span><br></pre></td></tr></table></figure>

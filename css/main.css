@@ -2708,7 +2708,7 @@ ul.breadcrumb li + li:last-child {
   margin: auto;
 }
 .use-motion .animated {
-  visibility: visible;
+  visibility: inherit;
 }
 .header {
   align-self: stretch;
