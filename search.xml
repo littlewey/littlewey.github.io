@@ -169,8 +169,8 @@
         <category>random notes</category>
       </categories>
       <tags>
-        <tag>homework</tag>
         <tag>machine learning</tag>
+        <tag>homework</tag>
       </tags>
   </entry>
   <entry>
@@ -304,26 +304,6 @@
       </tags>
   </entry>
   <entry>
-    <title>my HHKB and macOS setup</title>
-    <url>/my-hhkb-and-macos-setup/</url>
-    <content><![CDATA[<h1 id="Key-mapping"><a href="#Key-mapping" class="headerlink" title="Key mapping"></a>Key mapping</h1><blockquote>
-<p>几个月前，我从 <code>HHKB Lite2 for Mac</code>  切换到了  <code>HHKB Pro 2 Type-S</code>，方向键需要map成 <code>Ctrl + h/ j/ k/ l</code> ，参考了@zjun 的 <a href="http://www.zjunothing.com/2017/05/28/hhkb%E5%9F%BA%E6%9C%AC%E8%AE%BE%E7%BD%AE/" target="_blank" rel="noopener">best practise</a> ，用到了 <a href="http://www.hammerspoon.org/" target="_blank" rel="noopener">Hammerspoon</a>，这里记录一下配置。</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">~/.hammerspoon</span><br><span class="line">❯ cat init.lua</span><br></pre></td></tr></table></figure>
-
-
-
-<figure class="highlight lua"><table><tr><td class="code"><pre><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">pressFn</span><span class="params">(mods, key)</span></span></span><br><span class="line">	<span class="keyword">if</span> key == <span class="literal">nil</span> <span class="keyword">then</span></span><br><span class="line">		key = mods</span><br><span class="line">		mods = &#123;&#125;</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">function</span><span class="params">()</span></span> hs.eventtap.keyStroke(mods, key, <span class="number">1000</span>) <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">remap</span><span class="params">(mods, key, pressFn)</span></span></span><br><span class="line">	hs.hotkey.bind(mods, key, pressFn, <span class="literal">nil</span>, pressFn)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>&#125;, <span class="string">'h'</span>, pressFn(<span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>&#125;, <span class="string">'j'</span>, pressFn(<span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>&#125;, <span class="string">'k'</span>, pressFn(<span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>&#125;, <span class="string">'l'</span>, pressFn(<span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'shift'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'shift'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'shift'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'shift'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'cmd'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'cmd'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'cmd'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'cmd'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'alt'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'alt'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'alt'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'alt'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'right'</span>))</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>random notes</category>
-      </categories>
-      <tags>
-        <tag>HHKB</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>jupyter pyenv and virtualenv in macOS</title>
     <url>/jupyter-notes/</url>
     <content><![CDATA[<blockquote>
@@ -372,160 +352,23 @@
       </tags>
   </entry>
   <entry>
-    <title>Distributed bugs are often latent: a Troubleshoot Story</title>
-    <url>/distributed-bugs-are-often-latent-a-troubleshoot-story/</url>
-    <content><![CDATA[<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>OpenStack, as a nested distributed system(where some of the subsystems are distributed systems), to troubleshoot on it could be quite tricky, not to mention its interdependence with other distributed systems in real word.</p>
-<p>We all share the feelings on how hard it is to solve a hidden issue in a distributed system as each call during a chain of invocation is unpredictable, the methods/ tools for sniffing/ tracking each part are either too hard, incapable, outside of control, or too expensive.</p>
-<p>The trigger made me composing this blog is the article: <a href="https://aws.amazon.com/builders-library/challenges-with-distributed-systems/" target="_blank" rel="noopener">Challenges with distributed systems</a> from <a href="https://twitter.com/jacobgabrielson" target="_blank" rel="noopener">Jacob Gabrielson</a>, where Jacob expounded how and why designing/ managing a request/response distributed system is challenging. I recommend to read it 😊. </p>
-<p>The story in this blog is a troubleshoot case I solved in a customer staging network years ago, where OpenStack clusters were integrated with some other different (virtual) Network Function clusters.</p>
-<h2 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h2><p>There were many OpenStack Clusters onsite, with different VNFs running on top of them. </p>
-<ul>
-<li><p>Two months before I arrived the customer site, the alarm <code>[NTP Upstream Server Failure]</code> was raised in one of the OpenStack Cluster.</p>
-</li>
-<li><p>Every party involved on this issue had looked into it jointly and each of them claimed they are all good: no clue to move on, and after the whole site’s yearly power down and up activity, the issue was gone. </p>
-</li>
-<li><p>One week ago, after a control plane nodes reboot, this alarm was raised again on another OpenStack Cluster.</p>
-</li>
-</ul>
-<p>Reviewing everything to have the pattern of the issue:</p>
-<ul>
-<li><p>There were two types of servers acted as upstream NTP for Openstack Clusters. Let’s say NTP-A and NTP-B, they were actually not dedicated NTP servers but a more heavy network function(NF):</p>
-<!--
-<img data-src="./distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_0.png" alt="NTP_Openstack_0" style="zoom:50%;" />
--->
-<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_0.png" class="">
-
-<ul>
-<li>NTP-A was the one associated with the issue OpenStack Clusters, which was a VNF running in Linux.</li>
-<li>NTP-B was a native NF in Solaris, to be repalced by NTP-A in future. #Customer has reasons to worry the issue more 😜.</li>
-</ul>
-</li>
-<li><p>The OpenStack side claimed they were good because they captured the NTP client packet sent to NTP-A and no response recieved.</p>
-</li>
-<li><p>The other side checked everything around NTP configuration, network etc. nothing abnormal was sorted out. Thus they had to blame the OpenStack side as there were other systems utilizing their NTP-A as upstream NTP, while no issues had encounterred.</p>
-</li>
-<li><p>Then both side suspected the packet was dropped somehow between NTP-A and OpenStack Cluster: the networking/ switches.</p>
-<ul>
-<li>The switch team observed nothing pointing to packet drop from the traffic .</li>
-<li>Even though there was chance they didn’t capture the drop on right time, why only OpenStack’s NTP request not responded?</li>
-<li>Was this issue happening in small frequency?</li>
-</ul>
-</li>
-</ul>
-<a id="more"></a>
-
-<h2 id="Troubleshoot-Story"><a href="#Troubleshoot-Story" class="headerlink" title="Troubleshoot Story"></a>Troubleshoot Story</h2><p>Luckily yet unfortunately, the alarm was kept being raised from OpenStack Cluster a, let’s call it OS-a, I started to look into this issue from it.</p>
-<p>First, allow me to explain how this OS-a call upstream NTP.</p>
-<p>From below figure, I used blue arrow to show a NTP client to server call, we could see all nodes include control-plane node(cpn), and other nodes configured their upstream NTP server as the control-plane hypervisor. Thus the alarm actually means something is wrong around the circle in the figure.</p>
-<blockquote>
-<p>note, in this OpenStack Cluster, the control-plane nodes were VMs hosted by cpn hypervisor node</p>
+    <title>my HHKB and macOS setup</title>
+    <url>/my-hhkb-and-macos-setup/</url>
+    <content><![CDATA[<h1 id="Key-mapping"><a href="#Key-mapping" class="headerlink" title="Key mapping"></a>Key mapping</h1><blockquote>
+<p>几个月前，我从 <code>HHKB Lite2 for Mac</code>  切换到了  <code>HHKB Pro 2 Type-S</code>，方向键需要map成 <code>Ctrl + h/ j/ k/ l</code> ，参考了@zjun 的 <a href="http://www.zjunothing.com/2017/05/28/hhkb%E5%9F%BA%E6%9C%AC%E8%AE%BE%E7%BD%AE/" target="_blank" rel="noopener">best practise</a> ，用到了 <a href="http://www.hammerspoon.org/" target="_blank" rel="noopener">Hammerspoon</a>，这里记录一下配置。</p>
 </blockquote>
-<!--
-<img data-src="./distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_OS_to_external_NTP.png" alt="NTP_Openstack_OS_to_external_NTP" style="zoom:60%;" />
--->
-<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_OS_to_external_NTP.png" class="">
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">~/.hammerspoon</span><br><span class="line">❯ cat init.lua</span><br></pre></td></tr></table></figure>
 
-<p>And let’s check NTP stats from the cpn hypervisor node, from below we could tell the [NTP server side packet not being recieved] frequency was hard to say small: in last <code>256 * 8</code> seconds of the moment, 3 of 8 NTP polling hadn’t get responded packet. By checking the alarm triggerring code, it’s found only after more than 1800 seconds a upstream NTP server not responding, a alarm will be raised, which is a slightly high threhold.</p>
-<blockquote>
-<p>note, please refer to <strong><a href="#Appendix">Appendix: <code>ntpd -pn</code> explained</a></strong> on how we get this information from below printout.</p>
-</blockquote>
-<!--  
-<img data-src="./distributed-bugs-are-often-latent-a-troubleshoot-story/ntpq_cpn_hypervisor.png" alt="ntpq_cpn_hypervisor" style="zoom:70%;" />
--->
-<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/ntpq_cpn_hypervisor.png" class="">
-<p>It’s a good sign to know this issue was actually easier to have the minimum reproduction: just query it directly from cpn hypervisor node, and, it’s in high frequency(easy to repoduce). </p>
-<p>Then we have below questions:</p>
-<ul>
-<li>What made our NTP call different from other systems(to possibly cause this issue)?</li>
-<li>Why it’s not happening not for always? And related to reboot?</li>
-</ul>
-<p>With above questions, I looked into the above blue circle between cpn hypervisor node and external NTP. The external NTP server is only reachable from OaM Network, under the hood cpn hypervisor node actually reached external NTP-A via a vRouter running inside cpn. That is, the last path of above blue circle is actually this orange circle below, aka, not from cpn hypervisor node itself.</p>
-<!--
-<img data-src="distributed-bugs-are-often-latent-a-troubleshoot-story/vrouter_to_external_NTP.png" alt="vrouter_to_external_NTP" style="zoom:67%;" />
---> 
-<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/vrouter_to_external_NTP.png" class="">
 
-<p>With above knowledge, packet from its cpn vRouter was captured:</p>
-<p>By checking the packet with <code>no.482</code>, whose client NTP call was not responded(others around it got responded), something intresting was found:</p>
-<ul>
-<li>The Source Port of this packet is not the well-known <code>123</code> port, instead, it’s <code>108</code>.</li>
-<li>For those got resonped in this cluster, they are in source port <code>123</code>.</li>
-</ul>
-<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/tcpdump_vrouter_ntp.png" class="">
 
-<p>This was something close to the turth, still more questions to answer😀:</p>
-<ul>
-<li>Was other cluster(without issues) in samliar situation? <code>src.port==108</code>?<ul>
-<li>Yes and No, I checked on other Openstack Cluster, all other clusters had one <code>non-123 port</code> being used when reaching NTP servers, while only this cluster encounted issues.<ul>
-<li>Should client source port be the well-known 123? <ul>
-<li>No, it’s not mandatory in <code>non-symmetric modes</code> referring to <a href="https://tools.ietf.org/html/rfc5905" target="_blank" rel="noopener">rfc5905</a></li>
-</ul>
-</li>
-<li>Seemed like a dead end!</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Why was source port being modified?<ul>
-<li>The vRouter used masquerade NAT, if at the same time(close enough) more than one NTP requests from different cpn hypervisor nodes were sent to same remote NTP, inside vRouter it would trigger source ports modification.<ul>
-<li>The modification was randomly chosen and fixed in first time in memory.<ul>
-<li>This also explained why it’s related to system reboot.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>Now we know information on how and why source port was modified in the alarm-raising cluster, but still cannot figure out why only that cluster encountered issue. At that time I really didn’t have more ideas, but the difference seemed to be related to in the random source port it chosed. I guessed something could be wrong on handling non-123 src.port NTP requests, then I googled this with keyword like:</p>
-<ul>
-<li><a href="https://lmgtfy.com/?q=ntp+non-123+port+drop" target="_blank" rel="noopener">ntp non-123 port drop</a></li>
-</ul>
-<p>And yes, I got some clue here: <a href="https://bugzilla.redhat.com/show_bug.cgi?id=1171630" target="_blank" rel="noopener">https://bugzilla.redhat.com/show_bug.cgi?id=1171630</a>.</p>
-<p>From the bug page we could tell, in certain verison of ntpd (like 4.2.7) , there was a bug to drop ntp request with source port number below 123, and it was fixexd in 4.2.8:</p>
-<!--  
-![ntpd_bug_diff](distributed-bugs-are-often-latent-a-troubleshoot-story/ntpd_bug_diff.png)
--->
-<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/ntpd_bug_diff.png" class="">
+<figure class="highlight lua"><table><tr><td class="code"><pre><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">pressFn</span><span class="params">(mods, key)</span></span></span><br><span class="line">	<span class="keyword">if</span> key == <span class="literal">nil</span> <span class="keyword">then</span></span><br><span class="line">		key = mods</span><br><span class="line">		mods = &#123;&#125;</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">function</span><span class="params">()</span></span> hs.eventtap.keyStroke(mods, key, <span class="number">1000</span>) <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">remap</span><span class="params">(mods, key, pressFn)</span></span></span><br><span class="line">	hs.hotkey.bind(mods, key, pressFn, <span class="literal">nil</span>, pressFn)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>&#125;, <span class="string">'h'</span>, pressFn(<span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>&#125;, <span class="string">'j'</span>, pressFn(<span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>&#125;, <span class="string">'k'</span>, pressFn(<span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>&#125;, <span class="string">'l'</span>, pressFn(<span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'shift'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'shift'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'shift'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'shift'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'cmd'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'cmd'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'cmd'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'cmd'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'alt'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'alt'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'alt'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'alt'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'cmd'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'shift'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>&#125;, <span class="string">'right'</span>))</span><br><span class="line"></span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'h'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'left'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'j'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'down'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'k'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'up'</span>))</span><br><span class="line">remap(&#123;<span class="string">'ctrl'</span>, <span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'l'</span>, pressFn(&#123;<span class="string">'cmd'</span>, <span class="string">'alt'</span>, <span class="string">'shift'</span>&#125;, <span class="string">'right'</span>))</span><br></pre></td></tr></table></figure>
 
-<h2 id="TLDR"><a href="#TLDR" class="headerlink" title="TLDR;"></a>TLDR;</h2><p>Then I asked the NTP-A administorator to confirm the ntpd version, it was 4.2.7😜. </p>
-<p>The solution will be: upgrade nptd from NTP-A.</p>
-<blockquote>
-<p>also, we come to know that the NTP-B was too old to have this NTP bug in its ntpd.</p>
-</blockquote>
-<p>Well, I am not a story-teller but, I really consider this troubleshoot case intresting, and it’s true as quoted from Jacob: </p>
-<blockquote>
-<p>Distributed bugs are often latent.</p>
-</blockquote>
-<h2 id="Appendix"><a href="#Appendix" class="headerlink" title="Appendix"></a>Appendix</h2><h3 id="ntpq-pn-explained"><a href="#ntpq-pn-explained" class="headerlink" title="ntpq -pn explained"></a><code>ntpq -pn</code> explained</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ man ntpq</span><br><span class="line">NTPQ(1)                      BSD General Commands Manual                     NTPQ(1)</span><br><span class="line"></span><br><span class="line">NAME</span><br><span class="line">     ntpq — standard NTP query program</span><br><span class="line"></span><br><span class="line">SYNOPSIS</span><br><span class="line">     ntpq [-flags] [-flag [value]] [--option-name[[=| ]value]] [ host ...]</span><br><span class="line"></span><br><span class="line">OPTIONS</span><br><span class="line">     -n, --numeric</span><br><span class="line">                 numeric host addresses.</span><br><span class="line"></span><br><span class="line">                 Output all host addresses <span class="keyword">in</span> dotted-quad numeric format rather than</span><br><span class="line">                 converting to the canonical host names.</span><br><span class="line"></span><br><span class="line">     -p, --peers</span><br><span class="line">                 Print a list of the peers.  This option must not appear <span class="keyword">in</span> combina‐</span><br><span class="line">                 tion with any of the following options: interactive.</span><br><span class="line"></span><br><span class="line">                 Print a list of the peers known to the server as well as a summary</span><br><span class="line">                 of their state. This is equivalent to the <span class="string">'peers'</span> interactive com‐</span><br><span class="line">                 mand.</span><br><span class="line"></span><br><span class="line"><span class="comment">#...</span></span><br><span class="line">           peers      Display a list of peers <span class="keyword">in</span> the form:</span><br><span class="line"></span><br><span class="line">                            Variable   Description</span><br><span class="line">                            remote     host name (or IP number) of peer.  The value</span><br><span class="line">                                       displayed will be truncated to 15 characters</span><br><span class="line">                                       unless the -w flag is given, <span class="keyword">in</span> <span class="built_in">which</span> <span class="keyword">case</span></span><br><span class="line">                                       the full value will be displayed on the first</span><br><span class="line">                                       line, and the remaining data is displayed on</span><br><span class="line">                                       the next line.</span><br><span class="line"><span class="comment">#...</span></span><br><span class="line">                            when       sec/min/hr since last received packet <span class="comment"># &lt;----</span></span><br><span class="line">                            poll       poll interval (log2 s)                <span class="comment"># &lt;----</span></span><br><span class="line">                            reach      reach <span class="built_in">shift</span> register (octal)          <span class="comment"># &lt;----</span></span><br><span class="line">                            delay      roundtrip delay</span><br><span class="line">                            offset     offset of server relative to this host</span><br><span class="line">                            jitter     jitter</span><br></pre></td></tr></table></figure>
-
-<p>We could focus on three columns of <code>when</code>, <code>poll</code>, <code>reach</code> as explained in above manual and below square. It told us:</p>
-<ul>
-<li>The stats will poll remote NTP servers in interval: 256 s</li>
-<li>For remote server<code>172.21.96.29</code> marked in purple arrow:<ul>
-<li>It received last packet since 204 seconds.</li>
-<li>And for last 8 times stats, 3 times of the service side respond were not recieved</li>
-</ul>
-</li>
-<li>For remote server<code>172.21.81.189</code> marked in purple arrow:<ul>
-<li>It received last packet since 32 seconds.</li>
-<li>And for last 8 times stats, 0 times of the service side respond were not recieved</li>
-</ul>
-</li>
-</ul>
-<!--
-<img data-src="distributed-bugs-are-often-latent-a-troubleshoot-story/appendix_ntpq_stats.png" alt="appendix_ntpq_stats" style="zoom:70%;" />
---> 
-<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/appendix_ntpq_stats.png" class="">
 ]]></content>
       <categories>
-        <category>openstack</category>
+        <category>random notes</category>
       </categories>
       <tags>
-        <tag>distributed system</tag>
-        <tag>troubleshoot</tag>
-        <tag>NTP</tag>
-        <tag>openstack</tag>
+        <tag>HHKB</tag>
       </tags>
   </entry>
   <entry>
@@ -748,18 +591,160 @@
       </tags>
   </entry>
   <entry>
-    <title>Openstack Basic for newbie</title>
-    <url>/openstack-basic-for-newbie/</url>
-    <content><![CDATA[<p>整理了一下2017年8月份内部做的一个training的slide，去除了不能公布的部分，放在<a href="https://github.com/wey-gu/workshops/blob/master/00-Openstack-Basic/release/Openstack_Basic_Blog.pdf" target="_blank" rel="noopener">这里</a>。</p>
-<p>那次的training是针对telco. engineers开始学习NFVi的知识的为期一周的，每天半天session的集中入门。前两天是讲解这个slide，后三天是hands-on的手动安装基于Ubuntu VM集群上的Openstack O。</p>
-<p>hands-on的部分我写成了单独的note，也放在<a href="https://note.siwei.info/deploy-openstack-o-on-self-privisoned-virtualbox-ubuntu-vms-manually/">这里</a>。</p>
+    <title>Distributed bugs are often latent: a Troubleshoot Story</title>
+    <url>/distributed-bugs-are-often-latent-a-troubleshoot-story/</url>
+    <content><![CDATA[<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>OpenStack, as a nested distributed system(where some of the subsystems are distributed systems), to troubleshoot on it could be quite tricky, not to mention its interdependence with other distributed systems in real word.</p>
+<p>We all share the feelings on how hard it is to solve a hidden issue in a distributed system as each call during a chain of invocation is unpredictable, the methods/ tools for sniffing/ tracking each part are either too hard, incapable, outside of control, or too expensive.</p>
+<p>The trigger made me composing this blog is the article: <a href="https://aws.amazon.com/builders-library/challenges-with-distributed-systems/" target="_blank" rel="noopener">Challenges with distributed systems</a> from <a href="https://twitter.com/jacobgabrielson" target="_blank" rel="noopener">Jacob Gabrielson</a>, where Jacob expounded how and why designing/ managing a request/response distributed system is challenging. I recommend to read it 😊. </p>
+<p>The story in this blog is a troubleshoot case I solved in a customer staging network years ago, where OpenStack clusters were integrated with some other different (virtual) Network Function clusters.</p>
+<h2 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h2><p>There were many OpenStack Clusters onsite, with different VNFs running on top of them. </p>
+<ul>
+<li><p>Two months before I arrived the customer site, the alarm <code>[NTP Upstream Server Failure]</code> was raised in one of the OpenStack Cluster.</p>
+</li>
+<li><p>Every party involved on this issue had looked into it jointly and each of them claimed they are all good: no clue to move on, and after the whole site’s yearly power down and up activity, the issue was gone. </p>
+</li>
+<li><p>One week ago, after a control plane nodes reboot, this alarm was raised again on another OpenStack Cluster.</p>
+</li>
+</ul>
+<p>Reviewing everything to have the pattern of the issue:</p>
+<ul>
+<li><p>There were two types of servers acted as upstream NTP for Openstack Clusters. Let’s say NTP-A and NTP-B, they were actually not dedicated NTP servers but a more heavy network function(NF):</p>
+<!--
+<img data-src="./distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_0.png" alt="NTP_Openstack_0" style="zoom:50%;" />
+-->
+<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_0.png" class="">
+
+<ul>
+<li>NTP-A was the one associated with the issue OpenStack Clusters, which was a VNF running in Linux.</li>
+<li>NTP-B was a native NF in Solaris, to be repalced by NTP-A in future. #Customer has reasons to worry the issue more 😜.</li>
+</ul>
+</li>
+<li><p>The OpenStack side claimed they were good because they captured the NTP client packet sent to NTP-A and no response recieved.</p>
+</li>
+<li><p>The other side checked everything around NTP configuration, network etc. nothing abnormal was sorted out. Thus they had to blame the OpenStack side as there were other systems utilizing their NTP-A as upstream NTP, while no issues had encounterred.</p>
+</li>
+<li><p>Then both side suspected the packet was dropped somehow between NTP-A and OpenStack Cluster: the networking/ switches.</p>
+<ul>
+<li>The switch team observed nothing pointing to packet drop from the traffic .</li>
+<li>Even though there was chance they didn’t capture the drop on right time, why only OpenStack’s NTP request not responded?</li>
+<li>Was this issue happening in small frequency?</li>
+</ul>
+</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="Troubleshoot-Story"><a href="#Troubleshoot-Story" class="headerlink" title="Troubleshoot Story"></a>Troubleshoot Story</h2><p>Luckily yet unfortunately, the alarm was kept being raised from OpenStack Cluster a, let’s call it OS-a, I started to look into this issue from it.</p>
+<p>First, allow me to explain how this OS-a call upstream NTP.</p>
+<p>From below figure, I used blue arrow to show a NTP client to server call, we could see all nodes include control-plane node(cpn), and other nodes configured their upstream NTP server as the control-plane hypervisor. Thus the alarm actually means something is wrong around the circle in the figure.</p>
+<blockquote>
+<p>note, in this OpenStack Cluster, the control-plane nodes were VMs hosted by cpn hypervisor node</p>
+</blockquote>
+<!--
+<img data-src="./distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_OS_to_external_NTP.png" alt="NTP_Openstack_OS_to_external_NTP" style="zoom:60%;" />
+-->
+<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_OS_to_external_NTP.png" class="">
+
+<p>And let’s check NTP stats from the cpn hypervisor node, from below we could tell the [NTP server side packet not being recieved] frequency was hard to say small: in last <code>256 * 8</code> seconds of the moment, 3 of 8 NTP polling hadn’t get responded packet. By checking the alarm triggerring code, it’s found only after more than 1800 seconds a upstream NTP server not responding, a alarm will be raised, which is a slightly high threhold.</p>
+<blockquote>
+<p>note, please refer to <strong><a href="#Appendix">Appendix: <code>ntpd -pn</code> explained</a></strong> on how we get this information from below printout.</p>
+</blockquote>
+<!--  
+<img data-src="./distributed-bugs-are-often-latent-a-troubleshoot-story/ntpq_cpn_hypervisor.png" alt="ntpq_cpn_hypervisor" style="zoom:70%;" />
+-->
+<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/ntpq_cpn_hypervisor.png" class="">
+<p>It’s a good sign to know this issue was actually easier to have the minimum reproduction: just query it directly from cpn hypervisor node, and, it’s in high frequency(easy to repoduce). </p>
+<p>Then we have below questions:</p>
+<ul>
+<li>What made our NTP call different from other systems(to possibly cause this issue)?</li>
+<li>Why it’s not happening not for always? And related to reboot?</li>
+</ul>
+<p>With above questions, I looked into the above blue circle between cpn hypervisor node and external NTP. The external NTP server is only reachable from OaM Network, under the hood cpn hypervisor node actually reached external NTP-A via a vRouter running inside cpn. That is, the last path of above blue circle is actually this orange circle below, aka, not from cpn hypervisor node itself.</p>
+<!--
+<img data-src="distributed-bugs-are-often-latent-a-troubleshoot-story/vrouter_to_external_NTP.png" alt="vrouter_to_external_NTP" style="zoom:67%;" />
+--> 
+<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/vrouter_to_external_NTP.png" class="">
+
+<p>With above knowledge, packet from its cpn vRouter was captured:</p>
+<p>By checking the packet with <code>no.482</code>, whose client NTP call was not responded(others around it got responded), something intresting was found:</p>
+<ul>
+<li>The Source Port of this packet is not the well-known <code>123</code> port, instead, it’s <code>108</code>.</li>
+<li>For those got resonped in this cluster, they are in source port <code>123</code>.</li>
+</ul>
+<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/tcpdump_vrouter_ntp.png" class="">
+
+<p>This was something close to the turth, still more questions to answer😀:</p>
+<ul>
+<li>Was other cluster(without issues) in samliar situation? <code>src.port==108</code>?<ul>
+<li>Yes and No, I checked on other Openstack Cluster, all other clusters had one <code>non-123 port</code> being used when reaching NTP servers, while only this cluster encounted issues.<ul>
+<li>Should client source port be the well-known 123? <ul>
+<li>No, it’s not mandatory in <code>non-symmetric modes</code> referring to <a href="https://tools.ietf.org/html/rfc5905" target="_blank" rel="noopener">rfc5905</a></li>
+</ul>
+</li>
+<li>Seemed like a dead end!</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Why was source port being modified?<ul>
+<li>The vRouter used masquerade NAT, if at the same time(close enough) more than one NTP requests from different cpn hypervisor nodes were sent to same remote NTP, inside vRouter it would trigger source ports modification.<ul>
+<li>The modification was randomly chosen and fixed in first time in memory.<ul>
+<li>This also explained why it’s related to system reboot.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Now we know information on how and why source port was modified in the alarm-raising cluster, but still cannot figure out why only that cluster encountered issue. At that time I really didn’t have more ideas, but the difference seemed to be related to in the random source port it chosed. I guessed something could be wrong on handling non-123 src.port NTP requests, then I googled this with keyword like:</p>
+<ul>
+<li><a href="https://lmgtfy.com/?q=ntp+non-123+port+drop" target="_blank" rel="noopener">ntp non-123 port drop</a></li>
+</ul>
+<p>And yes, I got some clue here: <a href="https://bugzilla.redhat.com/show_bug.cgi?id=1171630" target="_blank" rel="noopener">https://bugzilla.redhat.com/show_bug.cgi?id=1171630</a>.</p>
+<p>From the bug page we could tell, in certain verison of ntpd (like 4.2.7) , there was a bug to drop ntp request with source port number below 123, and it was fixexd in 4.2.8:</p>
+<!--  
+![ntpd_bug_diff](distributed-bugs-are-often-latent-a-troubleshoot-story/ntpd_bug_diff.png)
+-->
+<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/ntpd_bug_diff.png" class="">
+
+<h2 id="TLDR"><a href="#TLDR" class="headerlink" title="TLDR;"></a>TLDR;</h2><p>Then I asked the NTP-A administorator to confirm the ntpd version, it was 4.2.7😜. </p>
+<p>The solution will be: upgrade nptd from NTP-A.</p>
+<blockquote>
+<p>also, we come to know that the NTP-B was too old to have this NTP bug in its ntpd.</p>
+</blockquote>
+<p>Well, I am not a story-teller but, I really consider this troubleshoot case intresting, and it’s true as quoted from Jacob: </p>
+<blockquote>
+<p>Distributed bugs are often latent.</p>
+</blockquote>
+<h2 id="Appendix"><a href="#Appendix" class="headerlink" title="Appendix"></a>Appendix</h2><h3 id="ntpq-pn-explained"><a href="#ntpq-pn-explained" class="headerlink" title="ntpq -pn explained"></a><code>ntpq -pn</code> explained</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ man ntpq</span><br><span class="line">NTPQ(1)                      BSD General Commands Manual                     NTPQ(1)</span><br><span class="line"></span><br><span class="line">NAME</span><br><span class="line">     ntpq — standard NTP query program</span><br><span class="line"></span><br><span class="line">SYNOPSIS</span><br><span class="line">     ntpq [-flags] [-flag [value]] [--option-name[[=| ]value]] [ host ...]</span><br><span class="line"></span><br><span class="line">OPTIONS</span><br><span class="line">     -n, --numeric</span><br><span class="line">                 numeric host addresses.</span><br><span class="line"></span><br><span class="line">                 Output all host addresses <span class="keyword">in</span> dotted-quad numeric format rather than</span><br><span class="line">                 converting to the canonical host names.</span><br><span class="line"></span><br><span class="line">     -p, --peers</span><br><span class="line">                 Print a list of the peers.  This option must not appear <span class="keyword">in</span> combina‐</span><br><span class="line">                 tion with any of the following options: interactive.</span><br><span class="line"></span><br><span class="line">                 Print a list of the peers known to the server as well as a summary</span><br><span class="line">                 of their state. This is equivalent to the <span class="string">'peers'</span> interactive com‐</span><br><span class="line">                 mand.</span><br><span class="line"></span><br><span class="line"><span class="comment">#...</span></span><br><span class="line">           peers      Display a list of peers <span class="keyword">in</span> the form:</span><br><span class="line"></span><br><span class="line">                            Variable   Description</span><br><span class="line">                            remote     host name (or IP number) of peer.  The value</span><br><span class="line">                                       displayed will be truncated to 15 characters</span><br><span class="line">                                       unless the -w flag is given, <span class="keyword">in</span> <span class="built_in">which</span> <span class="keyword">case</span></span><br><span class="line">                                       the full value will be displayed on the first</span><br><span class="line">                                       line, and the remaining data is displayed on</span><br><span class="line">                                       the next line.</span><br><span class="line"><span class="comment">#...</span></span><br><span class="line">                            when       sec/min/hr since last received packet <span class="comment"># &lt;----</span></span><br><span class="line">                            poll       poll interval (log2 s)                <span class="comment"># &lt;----</span></span><br><span class="line">                            reach      reach <span class="built_in">shift</span> register (octal)          <span class="comment"># &lt;----</span></span><br><span class="line">                            delay      roundtrip delay</span><br><span class="line">                            offset     offset of server relative to this host</span><br><span class="line">                            jitter     jitter</span><br></pre></td></tr></table></figure>
+
+<p>We could focus on three columns of <code>when</code>, <code>poll</code>, <code>reach</code> as explained in above manual and below square. It told us:</p>
+<ul>
+<li>The stats will poll remote NTP servers in interval: 256 s</li>
+<li>For remote server<code>172.21.96.29</code> marked in purple arrow:<ul>
+<li>It received last packet since 204 seconds.</li>
+<li>And for last 8 times stats, 3 times of the service side respond were not recieved</li>
+</ul>
+</li>
+<li>For remote server<code>172.21.81.189</code> marked in purple arrow:<ul>
+<li>It received last packet since 32 seconds.</li>
+<li>And for last 8 times stats, 0 times of the service side respond were not recieved</li>
+</ul>
+</li>
+</ul>
+<!--
+<img data-src="distributed-bugs-are-often-latent-a-troubleshoot-story/appendix_ntpq_stats.png" alt="appendix_ntpq_stats" style="zoom:70%;" />
+--> 
+<img data-src="/distributed-bugs-are-often-latent-a-troubleshoot-story/appendix_ntpq_stats.png" class="">
 ]]></content>
       <categories>
         <category>openstack</category>
       </categories>
       <tags>
         <tag>openstack</tag>
-        <tag>slide</tag>
+        <tag>distributed system</tag>
+        <tag>troubleshoot</tag>
+        <tag>NTP</tag>
       </tags>
   </entry>
   <entry>
@@ -985,6 +970,21 @@
         <tag>socketio</tag>
         <tag>vue.js</tag>
         <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Openstack Basic for newbie</title>
+    <url>/openstack-basic-for-newbie/</url>
+    <content><![CDATA[<p>整理了一下2017年8月份内部做的一个training的slide，去除了不能公布的部分，放在<a href="https://github.com/wey-gu/workshops/blob/master/00-Openstack-Basic/release/Openstack_Basic_Blog.pdf" target="_blank" rel="noopener">这里</a>。</p>
+<p>那次的training是针对telco. engineers开始学习NFVi的知识的为期一周的，每天半天session的集中入门。前两天是讲解这个slide，后三天是hands-on的手动安装基于Ubuntu VM集群上的Openstack O。</p>
+<p>hands-on的部分我写成了单独的note，也放在<a href="https://note.siwei.info/deploy-openstack-o-on-self-privisoned-virtualbox-ubuntu-vms-manually/">这里</a>。</p>
+]]></content>
+      <categories>
+        <category>openstack</category>
+      </categories>
+      <tags>
+        <tag>openstack</tag>
+        <tag>slide</tag>
       </tags>
   </entry>
   <entry>
