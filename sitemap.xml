@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://note.siwei.info/my-first-pr-in-rust-vmm/</loc>
+    
+    <lastmod>2020-07-26T00:51:31.435Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://note.siwei.info/links/index.html</loc>
     
     <lastmod>2020-07-16T12:23:26.885Z</lastmod>

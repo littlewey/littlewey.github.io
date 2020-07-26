@@ -2997,4 +2997,15 @@ Comment out any other session storage configuration.</code></pre><ul>
         <tag>openstack</tag>
       </tags>
   </entry>
+  <entry>
+    <title>My First PR in rust-vmm</title>
+    <url>/my-first-pr-in-rust-vmm/</url>
+    <content><![CDATA[<p>[^1]: Using the KVM API: <a href="https://lwn.net/Articles/658511" target="_blank" rel="noopener">https://lwn.net/Articles/658511</a></p>
+]]></content>
+      <tags>
+        <tag>rust-vmm</tag>
+        <tag>kvm</tag>
+        <tag>virtualization</tag>
+      </tags>
+  </entry>
 </search>
