@@ -372,6 +372,21 @@
       </tags>
   </entry>
   <entry>
+    <title>Openstack Basic for newbie</title>
+    <url>/openstack-basic-for-newbie/</url>
+    <content><![CDATA[<p>整理了一下2017年8月份内部做的一个training的slide，去除了不能公布的部分，放在<a href="https://github.com/wey-gu/workshops/blob/master/00-Openstack-Basic/release/Openstack_Basic_Blog.pdf" target="_blank" rel="noopener">这里</a>。</p>
+<p>那次的training是针对telco. engineers开始学习NFVi的知识的为期一周的，每天半天session的集中入门。前两天是讲解这个slide，后三天是hands-on的手动安装基于Ubuntu VM集群上的Openstack O。</p>
+<p>hands-on的部分我写成了单独的note，也放在<a href="https://note.siwei.info/deploy-openstack-o-on-self-privisoned-virtualbox-ubuntu-vms-manually/">这里</a>。</p>
+]]></content>
+      <categories>
+        <category>openstack</category>
+      </categories>
+      <tags>
+        <tag>openstack</tag>
+        <tag>slide</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>notes after creating a fuel plugin</title>
     <url>/notes-after-creating-a-fuel-plugin/</url>
     <content><![CDATA[<h1 id="关于"><a href="#关于" class="headerlink" title="关于"></a>关于</h1><p>这篇文章是我做一个内部 knowledge sharing准备的文档，介绍了如何基于MIranis fuel的平台开发一个fuel plugin，我用了一个死了的项目 nova-docker作为实际的例子。</p>
@@ -973,60 +988,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Openstack Basic for newbie</title>
-    <url>/openstack-basic-for-newbie/</url>
-    <content><![CDATA[<p>整理了一下2017年8月份内部做的一个training的slide，去除了不能公布的部分，放在<a href="https://github.com/wey-gu/workshops/blob/master/00-Openstack-Basic/release/Openstack_Basic_Blog.pdf" target="_blank" rel="noopener">这里</a>。</p>
-<p>那次的training是针对telco. engineers开始学习NFVi的知识的为期一周的，每天半天session的集中入门。前两天是讲解这个slide，后三天是hands-on的手动安装基于Ubuntu VM集群上的Openstack O。</p>
-<p>hands-on的部分我写成了单独的note，也放在<a href="https://note.siwei.info/deploy-openstack-o-on-self-privisoned-virtualbox-ubuntu-vms-manually/">这里</a>。</p>
-]]></content>
-      <categories>
-        <category>openstack</category>
-      </categories>
-      <tags>
-        <tag>openstack</tag>
-        <tag>slide</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Setup your ubuntu server in iPadOS with UTM</title>
-    <url>/setup-your-ubuntu-server-in-ipados-with-utm/</url>
-    <content><![CDATA[<p>This is the note on serving your Ubuntu server from iPadOS/ iOS with UTM, I am running 0.8 now.</p>
-<blockquote>
-<p>Download image</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>Configure Password for the image, here we use chroot instead of config drive, the reason is at bottom.</p>
-</blockquote>
-<p>Use chroot to set password for the cloud image as follow:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$sudo</span> modprobe nbd max_part=1</span><br><span class="line"><span class="variable">$sudo</span> qemu-nbd --connect=/dev/nbd0 bionic-server-cloudimg-amd64.img</span><br><span class="line"><span class="variable">$mkdir</span> -p /mnt/nbd</span><br><span class="line"><span class="variable">$sudo</span> mount /dev/nbd0p1 /mnt/nbd/ -o noatime</span><br><span class="line"><span class="variable">$chroot</span> /mnt/nbd</span><br><span class="line">ubuntu<span class="comment"># passwd</span></span><br><span class="line">ubuntu<span class="comment"># exit</span></span><br><span class="line"><span class="variable">$sudo</span> qemu-nbd --disconnect /dev/nbd0</span><br><span class="line"><span class="variable">$sudo</span> umount /dev/nbd0p1</span><br></pre></td></tr></table></figure>
-
-<a id="more"></a>
-
-<blockquote>
-<p>Use cloud drive is with ISSUES on UTM, as the nic mac address was fetched as <code>00:00:00:00</code> and it won’t proceed to configure the user data we put in the cloud drive…</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">RuntimeError Not all expected physical devices present 00:00:00:00</span><br></pre></td></tr></table></figure>
-
-<p>In case it worked someday, you could simply do it as follow:</p>
-<p>Let’s reuse the script created by Jan Walraven, ref: <a href="https://januz.nl/mac/generate-coreos-configdrive-iso-based-cloud-config-file" target="_blank" rel="noopener">here</a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">brew install qemu coreutils cdrtools</span><br><span class="line">./createIso.sh --cloud-config cloud-config.yml --name user-data</span><br></pre></td></tr></table></figure>
-
-<p>Or in Debian</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install qemu-utils cloud-utils</span><br><span class="line"></span><br><span class="line">cat &gt; user-data &lt;&lt;EOF</span><br><span class="line"><span class="comment">#cloud-config</span></span><br><span class="line">users:</span><br><span class="line">  - default</span><br><span class="line">  - name: &lt;user&gt;</span><br><span class="line">    passwd: &lt;psw&gt;</span><br><span class="line">    ssh_pwauth: True</span><br><span class="line">    chpasswd: &#123; expire: False &#125;</span><br><span class="line">    sudo: ALL=(ALL) NOPASSWD:ALL</span><br><span class="line">    groups: users, admin</span><br><span class="line">    ssh_authorized_keys:</span><br><span class="line">      - ssh-rsa &lt;key&gt;</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">cloud-localds config_drive.iso user-data</span><br></pre></td></tr></table></figure>
-
-<p>Add above iso image to VM and mounted as a CD device, boot from your HDD device(the cloud image), it should configure yor password and ssh key as above user-data.</p>
-]]></content>
-      <categories>
-        <category>random notes</category>
-      </categories>
-      <tags>
-        <tag>iPadOS</tag>
-        <tag>UTM</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Setup Kolla-ansible OpenStack Cluster in Vagrant 2020</title>
     <url>/setup-kolla-ansible-openstack-cluster-in-vagrant-2020/</url>
     <content><![CDATA[<p>This is a note on setting up kolla ansible openstack develop envrionment in your working machine.</p>
@@ -1129,6 +1090,45 @@
       <tags>
         <tag>openstack</tag>
         <tag>vagrant</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Setup your ubuntu server in iPadOS with UTM</title>
+    <url>/setup-your-ubuntu-server-in-ipados-with-utm/</url>
+    <content><![CDATA[<p>This is the note on serving your Ubuntu server from iPadOS/ iOS with UTM, I am running 0.8 now.</p>
+<blockquote>
+<p>Download image</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Configure Password for the image, here we use chroot instead of config drive, the reason is at bottom.</p>
+</blockquote>
+<p>Use chroot to set password for the cloud image as follow:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$sudo</span> modprobe nbd max_part=1</span><br><span class="line"><span class="variable">$sudo</span> qemu-nbd --connect=/dev/nbd0 bionic-server-cloudimg-amd64.img</span><br><span class="line"><span class="variable">$mkdir</span> -p /mnt/nbd</span><br><span class="line"><span class="variable">$sudo</span> mount /dev/nbd0p1 /mnt/nbd/ -o noatime</span><br><span class="line"><span class="variable">$chroot</span> /mnt/nbd</span><br><span class="line">ubuntu<span class="comment"># passwd</span></span><br><span class="line">ubuntu<span class="comment"># exit</span></span><br><span class="line"><span class="variable">$sudo</span> qemu-nbd --disconnect /dev/nbd0</span><br><span class="line"><span class="variable">$sudo</span> umount /dev/nbd0p1</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<blockquote>
+<p>Use cloud drive is with ISSUES on UTM, as the nic mac address was fetched as <code>00:00:00:00</code> and it won’t proceed to configure the user data we put in the cloud drive…</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">RuntimeError Not all expected physical devices present 00:00:00:00</span><br></pre></td></tr></table></figure>
+
+<p>In case it worked someday, you could simply do it as follow:</p>
+<p>Let’s reuse the script created by Jan Walraven, ref: <a href="https://januz.nl/mac/generate-coreos-configdrive-iso-based-cloud-config-file" target="_blank" rel="noopener">here</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">brew install qemu coreutils cdrtools</span><br><span class="line">./createIso.sh --cloud-config cloud-config.yml --name user-data</span><br></pre></td></tr></table></figure>
+
+<p>Or in Debian</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install qemu-utils cloud-utils</span><br><span class="line"></span><br><span class="line">cat &gt; user-data &lt;&lt;EOF</span><br><span class="line"><span class="comment">#cloud-config</span></span><br><span class="line">users:</span><br><span class="line">  - default</span><br><span class="line">  - name: &lt;user&gt;</span><br><span class="line">    passwd: &lt;psw&gt;</span><br><span class="line">    ssh_pwauth: True</span><br><span class="line">    chpasswd: &#123; expire: False &#125;</span><br><span class="line">    sudo: ALL=(ALL) NOPASSWD:ALL</span><br><span class="line">    groups: users, admin</span><br><span class="line">    ssh_authorized_keys:</span><br><span class="line">      - ssh-rsa &lt;key&gt;</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">cloud-localds config_drive.iso user-data</span><br></pre></td></tr></table></figure>
+
+<p>Add above iso image to VM and mounted as a CD device, boot from your HDD device(the cloud image), it should configure yor password and ssh key as above user-data.</p>
+]]></content>
+      <categories>
+        <category>random notes</category>
+      </categories>
+      <tags>
+        <tag>iPadOS</tag>
+        <tag>UTM</tag>
       </tags>
   </entry>
   <entry>
