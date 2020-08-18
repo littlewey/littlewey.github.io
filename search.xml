@@ -282,15 +282,20 @@
 <blockquote>
 <p>screen captured for machine_0</p>
 </blockquote>
-<p><img data-src="./DHCP.png" alt="DHCP"></p>
-<p><img data-src="./PXE_boot.png" alt="PXE_boot"></p>
+
+
+
+
+
+
 <h3 id="Issue-notes"><a href="#Issue-notes" class="headerlink" title="Issue notes"></a>Issue notes</h3><ol>
 <li><p>I tried to complie cobbler in Ubuntu 18.04 while failed in several phases, to save time switched to epel-release build Cobbler binary package in CentOS 7</p>
 </li>
 <li><p>default vNIC type not working properly on tftp, corrected for machine_0</p>
 </li>
 <li><p>dhcp server configuration, I shouldn’t have put DHCP for subnet A(was removed already), in which case,  machine_0 will be with IP address from subnet A while gateway in subnet B and it led L3 network failure, see below failure:</p>
-<p><img data-src="./L3_failure_after_DHCP.png" alt="L3_failure_after_HDCP"></p>
+
+
 </li>
 </ol>
 ]]></content>
@@ -2995,6 +3000,83 @@ Comment out any other session storage configuration.</code></pre><ul>
       </categories>
       <tags>
         <tag>openstack</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Performance Optimization refactor in Large Python Codebase, a note</title>
+    <url>/performance-optimization-refactor-in-large-python-codebase-a-note/</url>
+    <content><![CDATA[<h2 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h2><p>Early this year, I had a chance to take a refactor task: one of our big downstream features doesn’t scale. Here I share some of my learning notes to potentially help you out there :-).</p>
+<h2 id="Steps-to-follow"><a href="#Steps-to-follow" class="headerlink" title="Steps to follow"></a>Steps to follow</h2><h3 id="1-Runnable-Minimal-Reproduce"><a href="#1-Runnable-Minimal-Reproduce" class="headerlink" title="1. Runnable Minimal Reproduce"></a>1. Runnable Minimal Reproduce</h3><p>For a distributed system that required heavy hardware setup, or even worse, when you are trying to fix a case in the condition of a large scale, we need to have a runnable minimal reproduce(RMR) method to decouple the costly large scale of test environment/ production environment. A handy RMR is crucial as it brings us repeatability in circles of the rests steps.</p>
+<p>In my case, when I started looking into this task, I found the only environment in hand was already quite expensive for the team (15+ servers, each of them is with 100+ GiB RAM and 40+ threads), yet it’s still far from the scale I am optimizing for(1000+ servers case).</p>
+<blockquote>
+<p>How to have a RMR?</p>
+</blockquote>
+<p>The answer could vary case by case:</p>
+<ul>
+<li>Buy/Pay-as-you-go-on-others-server 1000+ nodes cluster?<ul>
+<li>This may be the best choice when you are in a cool organization working ;)</li>
+</ul>
+</li>
+<li>Setup virtualized node cluster?<ul>
+<li>In case you are dealing with the case you can semi-virtualize your environment to gain a 10/100 times scale yet with the closest to the real 1000+ node scale: use some efforts to set up 10 VMs on each bare-metal servers, that is, with 15+ servers you can reproduce the 150+ server issues. In my case, to create a virtualized environment is still very expensive as the workload we were working on depends on layers not that straightforward to be virtualized, and 150+ is still not enough for me.</li>
+</ul>
+</li>
+<li>Mock it!<ul>
+<li>I end up isolating the modular of code to be optimized, and, carefully mocking the interactions with other applications/ processes, with performance-wise mock.</li>
+</ul>
+</li>
+</ul>
+<p>With the RMR implemented, I put it in the existing UT code base with performance benchmark criteria as one of the assertions of the function I optimized. One of the reasons to trigger my putting RMR code in the codebase as UT is some of the surrounding mock utilities are there already, of course, the most important one is by doing so, these performance criteria will be always regression in every single commit merged to the codebase in future.</p>
+<p>It’s worth mentioning that, during the implementation of RMR, there are some assumptions to be made, for example, the involved database, RESTful API, and RPC calls were mocked with sort of sleep in certain times, which was estimated based some experiments. The actual value may vary in different environments while values under some assumptions still can help us on some level of evaluation, yet, provide us comparison on before and after the refactoring (as of course, we use same assumptions).</p>
+<h3 id="2-Profiling-and-analysis"><a href="#2-Profiling-and-analysis" class="headerlink" title="2. Profiling and analysis"></a>2. Profiling and analysis</h3><p>I started to have more of the whole-picture view of the function in two ways almost the same time: profiling and code reading.</p>
+<p>Before profiling the function calls, I perceptually went through the code the feature and drew all call flows with time complexity with <a href="http://asciiflow.com/" target="_blank" rel="noopener">http://asciiflow.com/</a> like this:</p>
+<img data-src="/performance-optimization-refactor-in-large-python-codebase-a-note/flow_ascii_blur.png" class="flow_ascii">
+
+<p>Or drew it in whiteboard like this:</p>
+<a id="more"></a>
+
+<img data-src="/performance-optimization-refactor-in-large-python-codebase-a-note/node_scheduler_flow_blur.png" class="node_scheduler_flow_blur">
+
+<p>While we should never start making decisions on the refactoring before seeing some pieces of evidence supporting your optimization direction, there could be a hidden piece of code you were not aware of or, not executed the way you thought it should be.</p>
+<p>In my case, to help understand more of the code and the performance overview of the call flow, I used two tools:</p>
+<ul>
+<li><a href="https://github.com/benfred/py-spy" target="_blank" rel="noopener">py-spy</a></li>
+<li><a href="https://pycallgraph.readthedocs.io/en/master/" target="_blank" rel="noopener">pycallgraph</a></li>
+</ul>
+<p>I used py-spy to attach to a running process of the real environment(the 15+ node one), and the output of py-spy can be chosen to be parsed with <a href="https://www.speedscope.app" target="_blank" rel="noopener">https://www.speedscope.app</a>, which is something like:</p>
+<img data-src="/performance-optimization-refactor-in-large-python-codebase-a-note/profiling_call_graph_blur.png" class="profiling_call_graph_blur">
+
+<p>I added pycallgraph into the RMR, and created a utility script to enable profiling with results from code base with tox and UT functions, and created a result output like this, where I masked information in this example manually.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">&lt;foo bar&gt; Profiling Result</span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">Foo Scale  (foo count): 1500</span><br><span class="line">Bar-ing Time (seconds): 1999999.999</span><br><span class="line"></span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">Top 20 Calls</span><br><span class="line">&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">Time                    Calls   Name</span><br><span class="line">---------------------------------------------------------------</span><br><span class="line">4.74627804756           1       foo.bar.blhablha_bar.blhablhabar._get_all_foo_states</span><br><span class="line">4.74620389938           1       foo.bar.foo_manager.fooManager.get_all_foo_states</span><br><span class="line">3.96935796738           500     foo.bar.foo_manager.fooState.run</span><br><span class="line">2.94463157654           500     foo.bar.foo_manager.fooState._locked_run</span><br><span class="line">2.76152682304           3508    joking.Logger._log</span><br><span class="line">2.40430951118           3008    joking.Logger.debug</span><br><span class="line">2.06136035919           2006    joking.KeywordArgumentAdapter.debug</span><br><span class="line">1.52482843399           3508    joking.Logger.handle</span><br><span class="line">1.42086815834           3508    joking.Logger.callHandlers</span><br><span class="line">1.05335450172           3508    foo.tests.fixtures.NullHandler.handle</span><br><span class="line">1.01028704643           3508    joking.NullHandler</span><br><span class="line">1.00268387794           4008    joking.Formatter</span><br><span class="line">0.882607698441          3508    joking.barer</span><br><span class="line">0.865972757339          500     foo.bar.foo_manager.fooState._run_from_zoo_node</span><br><span class="line">0.846918344498          4008    joking.LogRecord.getMessage</span><br><span class="line">0.784312725067          3508    joking.LogRecord.__init__</span><br><span class="line">0.669806003571          1       foo.bar.foo_manager.fooManager.get_blhablhaed_foos</span><br><span class="line">0.669651031494          1       foo.blhablhas.fooblhablhaHandler.get_blhablhaed_objects</span><br><span class="line">0.661297798157          501     foo.blhablhas.fooTestblhablha.blhablha_all</span><br><span class="line">0.653841972351          500     foo.bar.blhablhas.fooTestblhablha._blhablha_one</span><br></pre></td></tr></table></figure>
+
+<p>With the help of the profiling output, I polished my refactoring plans, and gained more confidence to say the optimization may work. More importantly, the utility I created and the callflow chart can be rechecked/rerun anytime. It’s really to have your context persistent in a visualized fashion and again, RMR with profiling.</p>
+<h3 id="3-Refactor"><a href="#3-Refactor" class="headerlink" title="3. Refactor"></a>3. Refactor</h3><p>It took much more time than I initially planned for the refactor implementation, there are always details not written in requirement/design documentation, and that involved more changes before all proposals landed eventually and brought me back the Step1 or Step2 to rework certain things. Thus I kept polishing the RMR code, the profiling code, polishing the call flow(with more details) and changed the design again and again.</p>
+<p>With the help of RMR profiling, I could always quickly see the effect/ impact of every step changes, which, I consider make the refactor process even happier ;-).</p>
+<p>In this project:</p>
+<ul>
+<li><p>DB Schema was changed, this help reduce DB calls and introduce more reasonable data structures</p>
+</li>
+<li><p>Many functions were refactored to:</p>
+</li>
+<li><ul>
+<li>be decoupled with functions of other features</li>
+<li>from a. centralized b. always calculated on the fly, to a. distributed to workers b. maintained and cached in an acceptable interval of loops</li>
+<li>configurable cache aging policy and state change policy(from real-time consistency to eventual consistency in different polling intervals)</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-Regression-Tests-CI-piped"><a href="#4-Regression-Tests-CI-piped" class="headerlink" title="4. Regression Tests, CI piped"></a>4. Regression Tests, CI piped</h3><ul>
+<li>In the final phase, with the refactored codebase in a stable state, that is:<ul>
+<li>All UT passed in the new design</li>
+<li>Confirmed profiling utility results with expected gains</li>
+</ul>
+</li>
+</ul>
+<p>We could use as much as possible the legacy end to end regression test cases to ensure the refactor brought no surprises :-). I’m willing to bet that you will have to go back to some changes and even need to return to some of the previous steps, in that case, CI piped end to end test will save your life again and again before we call the refactor a success.</p>
+]]></content>
+      <tags>
+        <tag>refactor</tag>
+        <tag>python</tag>
       </tags>
   </entry>
 </search>

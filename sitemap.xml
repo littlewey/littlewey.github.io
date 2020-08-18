@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://note.siwei.info/performance-optimization-refactor-in-large-python-codebase-a-note/</loc>
+    
+    <lastmod>2020-08-18T14:50:14.519Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://note.siwei.info/cobbler-provisioning-via-l3-and-dhcp-relay-a-poc/</loc>
+    
+    <lastmod>2020-08-18T14:48:38.848Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://note.siwei.info/resume/index.html</loc>
     
     <lastmod>2020-08-04T12:05:22.074Z</lastmod>
@@ -68,13 +82,6 @@
     <loc>https://note.siwei.info/setup-your-ubuntu-server-in-ipados-with-utm/</loc>
     
     <lastmod>2020-07-03T14:20:23.556Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://note.siwei.info/cobbler-provisioning-via-l3-and-dhcp-relay-a-poc/</loc>
-    
-    <lastmod>2020-07-03T14:18:12.535Z</lastmod>
     
   </url>
   
