@@ -51,6 +51,13 @@
   </url>
   
   <url>
+    <loc>https://note.siwei.info/nova-scheduling-study-on-making-it-smart-by-machine-learning/</loc>
+    
+    <lastmod>2019-03-06</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://note.siwei.info/project-resource-board-a-scalable-webapp-with-flask-socketio-and-vue-js/</loc>
     
     <lastmod>2019-02-16</lastmod>
@@ -313,6 +320,13 @@
   
   <url>
     <loc>https://note.siwei.info/tags/vagrant/</loc>
+    <lastmod>2021-01-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://note.siwei.info/tags/bayesian-optimization/</loc>
     <lastmod>2021-01-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
