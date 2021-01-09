@@ -514,6 +514,15 @@
 <p>updated on 2021 Jan: 这个项目已经运行了快一整年了，因为一直稳定运行，也没有新的需求，就没抽出时间来迭代 :-P，这里放一个实际跑起来的 demo 视频:</p>
 </blockquote>
 <p><video src="/project-resource-board-a-scalable-webapp-with-flask-socketio-and-vue-js/resource_board_demo.mp4" controls='controls' width='100%' height='100%'></video></p>
+<blockquote>
+<p>And some screenshots here :-)</p>
+</blockquote>
+<img data-src="/project-resource-board-a-scalable-webapp-with-flask-socketio-and-vue-js/screen_shot_0.png" class="">
+
+<img data-src="/project-resource-board-a-scalable-webapp-with-flask-socketio-and-vue-js/screen_shot_1.png" class="">
+
+<img data-src="/project-resource-board-a-scalable-webapp-with-flask-socketio-and-vue-js/screen_shot_2.png" class="">
+
 ]]></content>
       <categories>
         <category>build notes</category>
