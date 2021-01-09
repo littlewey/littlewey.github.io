@@ -517,10 +517,13 @@
 <blockquote>
 <p>And some screenshots here :-)</p>
 </blockquote>
+<p>Board Portal Page:</p>
 <img data-src="/project-resource-board-a-scalable-webapp-with-flask-socketio-and-vue-js/screen_shot_0.png" class="">
 
+<p>Resource History Page:</p>
 <img data-src="/project-resource-board-a-scalable-webapp-with-flask-socketio-and-vue-js/screen_shot_1.png" class="">
 
+<p>Resource Edit Card:</p>
 <img data-src="/project-resource-board-a-scalable-webapp-with-flask-socketio-and-vue-js/screen_shot_2.png" class="">
 
 ]]></content>
