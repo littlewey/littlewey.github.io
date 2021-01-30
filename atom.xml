@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Siwei Notes</title>
+  <icon>https://note.siwei.info/wey_pixel_tinified.png</icon>
+  <subtitle>思为笔记</subtitle>
+  <link href="https://note.siwei.info/atom.xml" rel="self"/>
+  
+  <link href="https://note.siwei.info/"/>
+  <updated>2020-08-18T12:09:58.000Z</updated>
+  <id>https://note.siwei.info/</id>
+  
+  <author>
+    <name>Wey Gu | 古思为</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Performance Optimization refactor in Large Python Codebase, a note</title>
+    <link href="https://note.siwei.info/performance-optimization-refactor-in-large-python-codebase-a-note/"/>
+    <id>https://note.siwei.info/performance-optimization-refactor-in-large-python-codebase-a-note/</id>
+    <published>2020-08-18T12:09:58.000Z</published>
+    <updated>2020-08-18T12:09:58.000Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Background&quot;&gt;&lt;a href=&quot;#Background&quot; class=&quot;headerlink&quot; title=&quot;Background&quot;&gt;&lt;/a&gt;Background&lt;/h2&gt;&lt;p&gt;Early this year, I had a chance to take a refactor task: one of our big downstream features doesn’t scale. Here I share some of my learning notes to potentially help you out there :-).&lt;/p&gt;
+&lt;h2 id=&quot;Steps-to-follow&quot;&gt;&lt;a href=&quot;#Steps-to-follow&quot; class=&quot;headerlink&quot; title=&quot;Steps to follow&quot;&gt;&lt;/a&gt;Steps to follow&lt;/h2&gt;&lt;h3 id=&quot;1-Runnable-Minimal-Reproduce&quot;&gt;&lt;a href=&quot;#1-Runnable-Minimal-Reproduce&quot; class=&quot;headerlink&quot; title=&quot;1. Runnable Minimal Reproduce&quot;&gt;&lt;/a&gt;1. Runnable Minimal Reproduce&lt;/h3&gt;&lt;p&gt;For a distributed system that required heavy hardware setup, or even worse, when you are trying to fix a case in the condition of a large scale, we need to have a runnable minimal reproduce(RMR) method to decouple the costly large scale of test environment/ production environment. A handy RMR is crucial as it brings us repeatability in circles of the rests steps.&lt;/p&gt;
+&lt;p&gt;In my case, when I started looking into this task, I found the only environment in hand was already quite expensive for the team (15+ servers, each of them is with 100+ GiB RAM and 40+ threads), yet it’s still far from the scale I am optimizing for(1000+ servers case).&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;How to have a RMR?&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;The answer could vary case by case:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Buy/Pay-as-you-go-on-others-server 1000+ nodes cluster?&lt;ul&gt;
+&lt;li&gt;This may be the best choice when you are in a cool organization working ;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Setup virtualized node cluster?&lt;ul&gt;
+&lt;li&gt;In case you are dealing with the case you can semi-virtualize your environment to gain a 10/100 times scale yet with the closest to the real 1000+ node scale: use some efforts to set up 10 VMs on each bare-metal servers, that is, with 15+ servers you can reproduce the 150+ server issues. In my case, to create a virtualized environment is still very expensive as the workload we were working on depends on layers not that straightforward to be virtualized, and 150+ is still not enough for me.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Mock it!&lt;ul&gt;
+&lt;li&gt;I end up isolating the modular of code to be optimized, and, carefully mocking the interactions with other applications/ processes, with performance-wise mock.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;With the RMR implemented, I put it in the existing UT code base with performance benchmark criteria as one of the assertions of the function I optimized. One of the reasons to trigger my putting RMR code in the codebase as UT is some of the surrounding mock utilities are there already, of course, the most important one is by doing so, these performance criteria will be always regression in every single commit merged to the codebase in future.&lt;/p&gt;
+&lt;p&gt;It’s worth mentioning that, during the implementation of RMR, there are some assumptions to be made, for example, the involved database, RESTful API, and RPC calls were mocked with sort of sleep in certain times, which was estimated based some experiments. The actual value may vary in different environments while values under some assumptions still can help us on some level of evaluation, yet, provide us comparison on before and after the refactoring (as of course, we use same assumptions).&lt;/p&gt;
+&lt;h3 id=&quot;2-Profiling-and-analysis&quot;&gt;&lt;a href=&quot;#2-Profiling-and-analysis&quot; class=&quot;headerlink&quot; title=&quot;2. Profiling and analysis&quot;&gt;&lt;/a&gt;2. Profiling and analysis&lt;/h3&gt;&lt;p&gt;I started to have more of the whole-picture view of the function in two ways almost the same time: profiling and code reading.&lt;/p&gt;
+&lt;p&gt;Before profiling the function calls, I perceptually went through the code the feature and drew all call flows with time complexity with &lt;a href=&quot;http://asciiflow.com/&quot;&gt;http://asciiflow.com/&lt;/a&gt; like this:&lt;/p&gt;
+&lt;img data-src=&quot;/performance-optimization-refactor-in-large-python-codebase-a-note/flow_ascii_blur.png&quot; class=&quot;flow_ascii&quot;&gt;
+
+&lt;p&gt;Or drew it in whiteboard like this:&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="refactor" scheme="https://note.siwei.info/tags/refactor/"/>
+    
+    <category term="python" scheme="https://note.siwei.info/tags/python/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Setup Kolla-ansible OpenStack Cluster in Vagrant 2020</title>
+    <link href="https://note.siwei.info/setup-kolla-ansible-openstack-cluster-in-vagrant-2020/"/>
+    <id>https://note.siwei.info/setup-kolla-ansible-openstack-cluster-in-vagrant-2020/</id>
+    <published>2020-05-26T10:31:36.000Z</published>
+    <updated>2020-05-26T10:31:36.000Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;This is a note on setting up kolla ansible openstack develop envrionment in your working machine.&lt;/p&gt;
+&lt;p&gt;I referred to this document: &lt;a href=&quot;https://docs.openstack.org/kolla-ansible/latest/contributor/vagrant-dev-env.html&quot;&gt;https://docs.openstack.org/kolla-ansible/latest/contributor/vagrant-dev-env.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;I had done this in 2020 May on my old mac mini with Catalina ;-). With 20 GiB disk and 6GiB RAM assigned to one Vagrant spawned (virtualbox), the OpenStack Cluster is running pretty well, comparing to my previous setups ( multi-VMs based manually deployment and VM based Mirantis Fuel 9.0 deployment), it’s obviously more reponsive with the help of the single node setup.&lt;/p&gt;
+&lt;p&gt;Here I leave the notes as a reference for you to have a playground easier.&lt;/p&gt;
+&lt;h2 id=&quot;Preparation&quot;&gt;&lt;a href=&quot;#Preparation&quot; class=&quot;headerlink&quot; title=&quot;Preparation&quot;&gt;&lt;/a&gt;Preparation&lt;/h2&gt;&lt;h3 id=&quot;Install-vagrant-and-plugins-needed&quot;&gt;&lt;a href=&quot;#Install-vagrant-and-plugins-needed&quot; class=&quot;headerlink&quot; title=&quot;Install vagrant and plugins needed&quot;&gt;&lt;/a&gt;Install vagrant and plugins needed&lt;/h3&gt;&lt;p&gt;Below is an example to do this on a macOS machine, to do that from other OS, refer to &lt;a href=&quot;https://www.vagrantup.com/docs/installation/&quot;&gt;here&lt;/a&gt;&lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;brew cask install virtualbox vagrant&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;vagrant plugin install vagrant-hostmanager vagrant-vbguest&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# if we need to resize disks after vagrant up&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;vagrant plugin install vagrant-disksize&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# if we need to make vagrant VM behind a proxy&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;vagrant plugin install vagrant-proxyconf&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h3 id=&quot;Clone-kolla-repo&quot;&gt;&lt;a href=&quot;#Clone-kolla-repo&quot; class=&quot;headerlink&quot; title=&quot;Clone kolla repo&quot;&gt;&lt;/a&gt;Clone kolla repo&lt;/h3&gt;&lt;p&gt;We need to clone below three repositories.&lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;git &lt;span class=&quot;built_in&quot;&gt;clone&lt;/span&gt; https://opendev.org/openstack/kolla-cli&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git &lt;span class=&quot;built_in&quot;&gt;clone&lt;/span&gt; https://opendev.org/openstack/kolla-ansible&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git &lt;span class=&quot;built_in&quot;&gt;clone&lt;/span&gt; https://opendev.org/openstack/kolla&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h3 id=&quot;Customise-Vagrant-scripts&quot;&gt;&lt;a href=&quot;#Customise-Vagrant-scripts&quot; class=&quot;headerlink&quot; title=&quot;Customise Vagrant scripts&quot;&gt;&lt;/a&gt;Customise Vagrant scripts&lt;/h3&gt;&lt;p&gt;I found the configuration file out-of-box is no longer working/ out of repair for some time, below changes on &lt;code&gt;Vagrantfile&lt;/code&gt;, &lt;code&gt;Vagrantfile.custom&lt;/code&gt;,  and &lt;code&gt;bootstrap.sh&lt;/code&gt; are needed.&lt;/p&gt;
+&lt;p&gt;For Vagrantfile.custom, we need to use Ubuntu 18.04 instead of 16.04, which comes with python3.6+ in apt repo.&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="openstack" scheme="https://note.siwei.info/categories/openstack/"/>
+    
+    
+    <category term="openstack" scheme="https://note.siwei.info/tags/openstack/"/>
+    
+    <category term="vagrant" scheme="https://note.siwei.info/tags/vagrant/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Setup your ubuntu server in iPadOS with UTM</title>
+    <link href="https://note.siwei.info/setup-your-ubuntu-server-in-ipados-with-utm/"/>
+    <id>https://note.siwei.info/setup-your-ubuntu-server-in-ipados-with-utm/</id>
+    <published>2020-04-11T10:30:11.000Z</published>
+    <updated>2020-04-11T10:30:11.000Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;This is the note on serving your Ubuntu server from iPadOS/ iOS with UTM, I am running 0.8 now.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Download image&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;wget https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Configure Password for the image, here we use chroot instead of config drive, the reason is at bottom.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Use chroot to set password for the cloud image as follow:&lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;variable&quot;&gt;$sudo&lt;/span&gt; modprobe nbd max_part=1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;variable&quot;&gt;$sudo&lt;/span&gt; qemu-nbd --connect=/dev/nbd0 bionic-server-cloudimg-amd64.img&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;variable&quot;&gt;$mkdir&lt;/span&gt; -p /mnt/nbd&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;variable&quot;&gt;$sudo&lt;/span&gt; mount /dev/nbd0p1 /mnt/nbd/ -o noatime&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;variable&quot;&gt;$chroot&lt;/span&gt; /mnt/nbd&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;ubuntu&lt;span class=&quot;comment&quot;&gt;# passwd&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;ubuntu&lt;span class=&quot;comment&quot;&gt;# exit&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;variable&quot;&gt;$sudo&lt;/span&gt; qemu-nbd --disconnect /dev/nbd0&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;variable&quot;&gt;$sudo&lt;/span&gt; umount /dev/nbd0p1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
+    
+    
+    
+    <category term="random notes" scheme="https://note.siwei.info/categories/random-notes/"/>
+    
+    
+    <category term="iPadOS" scheme="https://note.siwei.info/tags/ipados/"/>
+    
+    <category term="UTM" scheme="https://note.siwei.info/tags/utm/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Cobbler provisioning via L3 and DHCP Relay, a PoC</title>
+    <link href="https://note.siwei.info/cobbler-provisioning-via-l3-and-dhcp-relay-a-poc/"/>
+    <id>https://note.siwei.info/cobbler-provisioning-via-l3-and-dhcp-relay-a-poc/</id>
+    <published>2020-03-29T06:51:05.000Z</published>
+    <updated>2020-03-29T06:51:05.000Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Enable-cobbler-provisioning-via-L3-DHCP-relay&quot;&gt;&lt;a href=&quot;#Enable-cobbler-provisioning-via-L3-DHCP-relay&quot; class=&quot;headerlink&quot; title=&quot;Enable cobbler provisioning via L3 DHCP relay&quot;&gt;&lt;/a&gt;Enable cobbler provisioning via L3 DHCP relay&lt;/h2&gt;&lt;p&gt;I would like to setup a minimal PoC for Cobbler provisioning via DHCP relay, I will use virtualbox to spawn:&lt;/p&gt;
+&lt;p&gt;Three VMs:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Cobbler server in subnet A, let’s call it cobbler_server.&lt;/li&gt;
+&lt;li&gt;A machine to be provisioned in subnet B, it’s named as machine_0.&lt;/li&gt;
+&lt;li&gt;vRouter wired above machines in two subnets, it’s named as vrouter.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To create two subnets:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;subnet_A, vboxnet0: &lt;code&gt;192.168.56.0/24&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;subnet_B, vboxnet1: &lt;code&gt;192.168.57.0/24&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;And it should be like this:&lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;+-------------+        +-------------+        +-------------+&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;|             |        |     vRouter |        |   machine_0 |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;|             |        |192.168.56.10|        |             |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;|           +-+        +-+           |        |             |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;|           | |00000000| rr          |        |             |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;|           +-+        +-+r          |        |             |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;|192.168.56.11|        |  r          |        |             |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;|             |        |  r          |        |             |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;|             |        |  r          |        |             |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;|             |        |  r        +-+        +-+           |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;| Cobbler     |        |  rrrrrrrrr| |11111111| |           |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;| Server      |        |           +-+        +-+           |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;|             |        |192.168.57.10|        |             |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;+-------------+        +-------------+        +-------------+&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;0000000 subnet A: vboxnet0     +-+&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                               | | network interface&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;1111111 subnet B: vboxnet1     +-+&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;rrrrrrr DHCP Relay&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;Then we could use cobbler_server to provision a OS to machine_0.&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="experiment notes" scheme="https://note.siwei.info/categories/experiment-notes/"/>
+    
+    
+    <category term="cloud" scheme="https://note.siwei.info/tags/cloud/"/>
+    
+    <category term="DHCP Relay" scheme="https://note.siwei.info/tags/dhcp-relay/"/>
+    
+    <category term="cobbler" scheme="https://note.siwei.info/tags/cobbler/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Distributed bugs are often latent: a Troubleshoot Story</title>
+    <link href="https://note.siwei.info/distributed-bugs-are-often-latent-a-troubleshoot-story/"/>
+    <id>https://note.siwei.info/distributed-bugs-are-often-latent-a-troubleshoot-story/</id>
+    <published>2020-02-28T02:10:02.000Z</published>
+    <updated>2020-02-28T02:10:02.000Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;Abstract&quot;&gt;&lt;a href=&quot;#Abstract&quot; class=&quot;headerlink&quot; title=&quot;Abstract&quot;&gt;&lt;/a&gt;Abstract&lt;/h2&gt;&lt;p&gt;OpenStack, as a nested distributed system(where some of the subsystems are distributed systems), to troubleshoot on it could be quite tricky, not to mention its interdependence with other distributed systems in real word.&lt;/p&gt;
+&lt;p&gt;We all share the feelings on how hard it is to solve a hidden issue in a distributed system as each call during a chain of invocation is unpredictable, the methods/ tools for sniffing/ tracking each part are either too hard, incapable, outside of control, or too expensive.&lt;/p&gt;
+&lt;p&gt;The trigger made me composing this blog is the article: &lt;a href=&quot;https://aws.amazon.com/builders-library/challenges-with-distributed-systems/&quot;&gt;Challenges with distributed systems&lt;/a&gt; from &lt;a href=&quot;https://twitter.com/jacobgabrielson&quot;&gt;Jacob Gabrielson&lt;/a&gt;, where Jacob expounded how and why designing/ managing a request/response distributed system is challenging. I recommend to read it 😊. &lt;/p&gt;
+&lt;p&gt;The story in this blog is a troubleshoot case I solved in a customer staging network years ago, where OpenStack clusters were integrated with some other different (virtual) Network Function clusters.&lt;/p&gt;
+&lt;h2 id=&quot;Background&quot;&gt;&lt;a href=&quot;#Background&quot; class=&quot;headerlink&quot; title=&quot;Background&quot;&gt;&lt;/a&gt;Background&lt;/h2&gt;&lt;p&gt;There were many OpenStack Clusters onsite, with different VNFs running on top of them. &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Two months before I arrived the customer site, the alarm &lt;code&gt;[NTP Upstream Server Failure]&lt;/code&gt; was raised in one of the OpenStack Cluster.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Every party involved on this issue had looked into it jointly and each of them claimed they are all good: no clue to move on, and after the whole site’s yearly power down and up activity, the issue was gone. &lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;One week ago, after a control plane nodes reboot, this alarm was raised again on another OpenStack Cluster.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Reviewing everything to have the pattern of the issue:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;There were two types of servers acted as upstream NTP for Openstack Clusters. Let’s say NTP-A and NTP-B, they were actually not dedicated NTP servers but a more heavy network function(NF):&lt;/p&gt;
+&lt;!--
+&lt;img data-src=&quot;./distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_0.png&quot; alt=&quot;NTP_Openstack_0&quot; style=&quot;zoom:50%;&quot; /&gt;
+--&gt;
+&lt;img data-src=&quot;/distributed-bugs-are-often-latent-a-troubleshoot-story/NTP_Openstack_0.png&quot; class=&quot;&quot;&gt;
+
+&lt;ul&gt;
+&lt;li&gt;NTP-A was the one associated with the issue OpenStack Clusters, which was a VNF running in Linux.&lt;/li&gt;
+&lt;li&gt;NTP-B was a native NF in Solaris, to be repalced by NTP-A in future. #Customer has reasons to worry the issue more 😜.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The OpenStack side claimed they were good because they captured the NTP client packet sent to NTP-A and no response recieved.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The other side checked everything around NTP configuration, network etc. nothing abnormal was sorted out. Thus they had to blame the OpenStack side as there were other systems utilizing their NTP-A as upstream NTP, while no issues had encounterred.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Then both side suspected the packet was dropped somehow between NTP-A and OpenStack Cluster: the networking/ switches.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The switch team observed nothing pointing to packet drop from the traffic .&lt;/li&gt;
+&lt;li&gt;Even though there was chance they didn’t capture the drop on right time, why only OpenStack’s NTP request not responded?&lt;/li&gt;
+&lt;li&gt;Was this issue happening in small frequency?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</summary>
+    
+    
+    
+    <category term="openstack" scheme="https://note.siwei.info/categories/openstack/"/>
+    
+    
+    <category term="openstack" scheme="https://note.siwei.info/tags/openstack/"/>
+    
+    <category term="distributed system" scheme="https://note.siwei.info/tags/distributed-system/"/>
+    
+    <category term="troubleshoot" scheme="https://note.siwei.info/tags/troubleshoot/"/>
+    
+    <category term="NTP" scheme="https://note.siwei.info/tags/ntp/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>jupyter pyenv and virtualenv in macOS</title>
+    <link href="https://note.siwei.info/jupyter-notes/"/>
+    <id>https://note.siwei.info/jupyter-notes/</id>
+    <published>2019-03-27T06:53:50.000Z</published>
+    <updated>2019-03-27T06:53:50.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;Conbined with &lt;code&gt;pyenv&lt;/code&gt;  &lt;code&gt;virtualenv&lt;/code&gt; and &lt;code&gt;Jupyter kernal specification&lt;/code&gt;, we could have</summary>
+        
+      
+    
+    
+    
+    <category term="random notes" scheme="https://note.siwei.info/categories/random-notes/"/>
+    
+    
+    <category term="jupyter" scheme="https://note.siwei.info/tags/jupyter/"/>
+    
+    <category term="pyenv" scheme="https://note.siwei.info/tags/pyenv/"/>
+    
+    <category term="virtualenv" scheme="https://note.siwei.info/tags/virtualenv/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>nova scheduling study on making it smart by machine learning</title>
+    <link href="https://note.siwei.info/nova-scheduling-study-on-making-it-smart-by-machine-learning/"/>
+    <id>https://note.siwei.info/nova-scheduling-study-on-making-it-smart-by-machine-learning/</id>
+    <published>2019-03-06T06:30:29.000Z</published>
+    <updated>2019-03-06T06:30:29.000Z</updated>
+    
+    
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;update in 2019 June: I managed to implement it, check &lt;a href=&quot;https://github.com/wey-gu/AutoOptCloud&quot;&gt;here&lt;/a&gt; ;-) will write more on how it was done…&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;This note is my brain dump on getting ideas to do machine learning enabled optimized nova scheduler weighing.&lt;/p&gt;
+&lt;h1 id=&quot;How-existing-Weighing-works&quot;&gt;&lt;a href=&quot;#How-existing-Weighing-works&quot; class=&quot;headerlink&quot; title=&quot;How existing Weighing works?&quot;&gt;&lt;/a&gt;How existing Weighing works?&lt;/h1&gt;&lt;h2 id=&quot;Short-version-conclusion&quot;&gt;&lt;a href=&quot;#Short-version-conclusion&quot; class=&quot;headerlink&quot; title=&quot;Short version conclusion&quot;&gt;&lt;/a&gt;Short version conclusion&lt;/h2&gt;&lt;p&gt;By default, it simply weighted all existing weighers with weighing factor 1.0.&lt;/p&gt;
+&lt;h2 id=&quot;TL-DR&quot;&gt;&lt;a href=&quot;#TL-DR&quot; class=&quot;headerlink&quot; title=&quot;TL;DR&quot;&gt;&lt;/a&gt;TL;DR&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;see ref first : &lt;a href=&quot;https://www.slideshare.net/guptapeeyush1/presentation1-23249150&quot;&gt;https://www.slideshare.net/guptapeeyush1/presentation1-23249150&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;The weighing was called by:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;self.weight_handler.get_weighed_objects(self.weighers)&lt;/code&gt; &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;self.weighers &lt;/code&gt; comes from &lt;code&gt;CONF.host_mgr_sched_wgt_cls_opt &lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;By default it’s all weighers&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;default=[&amp;quot;nova.scheduler.weights.all_weighers&amp;quot;]&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;get_weighed_objects&lt;/code&gt; is doing this:&lt;/p&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; i, weight &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;enumerate&lt;/span&gt;(weights):&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    obj = weighed_objs[i]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    obj.weight += weigher.weight_multiplier() * weight&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Below are mentioned subroutines…&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</summary>
+    
+    
+    
+    
+    <category term="openstack" scheme="https://note.siwei.info/tags/openstack/"/>
+    
+    <category term="cloud" scheme="https://note.siwei.info/tags/cloud/"/>
+    
+    <category term="machine learning" scheme="https://note.siwei.info/tags/machine-learning/"/>
+    
+    <category term="bayesian optimization" scheme="https://note.siwei.info/tags/bayesian-optimization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Project Resource Board: a scalable webapp with Flask socketio and Vue.js</title>
+    <link href="https://note.siwei.info/project-resource-board-a-scalable-webapp-with-flask-socketio-and-vue-js/"/>
+    <id>https://note.siwei.info/project-resource-board-a-scalable-webapp-with-flask-socketio-and-vue-js/</id>
+    <published>2019-02-16T14:27:28.000Z</published>
+    <updated>2019-02-16T14:27:28.000Z</updated>
+    
+    
+    <summary type="html">&lt;img data-src=&quot;/project-resource-board-a-scalable-webapp-with-flask-socketio-and-vue-js/arch_diagram_0.png&quot; class=&quot;&quot;&gt;
+
+&lt;h1 id=&quot;关于&quot;&gt;&lt;a href=&quot;#关于&quot; class=&quot;headerlink&quot; title=&quot;关于&quot;&gt;&lt;/a&gt;关于&lt;/h1&gt;&lt;p&gt;我在做一个叫做 resource board的 side project， 它是一个方便团队协作中使用共享资源的web app。&lt;/p&gt;
+&lt;p&gt;本文是我在写第一个发布版本之前持续更新的记录。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;updated in &lt;code&gt;2019-April-6&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;以单体架构先实现了可用的版本，部署在公司内网给项目使用上了，也公布一下代码：&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/wey-gu/resource-board&quot;&gt;https://github.com/wey-gu/resource-board&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;之后我会花时间迭代下去，不过现在课余时间在做一个机器学习调优的项目，这个优先级只能降低。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id=&quot;缘起&quot;&gt;&lt;a href=&quot;#缘起&quot; class=&quot;headerlink&quot; title=&quot;缘起&quot;&gt;&lt;/a&gt;缘起&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;为什么开始&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;在云计算研发部门搬砖半年，一直做一些很小的feature开发，连着几个月早出晚归加上牺牲周末时间的赶进度让我内心很不平静。我需要做点什么，因为本质上我热爱的是 &lt;code&gt;build things&lt;/code&gt;，做一个&lt;code&gt;proper side project&lt;/code&gt; 的主意在脑子里转了好久了，我决定先做一个简单的东西出来。&lt;/p&gt;
+&lt;p&gt;这个东西就是一个 &lt;code&gt;resource board&lt;/code&gt; 。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;学到什么&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;code&gt;resourece borard&lt;/code&gt; 是我起的名字，其实就是一份在线的表格、面板，本质上用 &lt;code&gt;O365&lt;/code&gt; / &lt;code&gt;onedrive for business&lt;/code&gt; 完全可以实现类似的功效。不过我还是想造这样一个轮子，涉及一下产品开发的全生命周期的从无到有的创造、学习、实践：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;planning, prototyping&lt;/li&gt;
+&lt;li&gt;architecture&lt;/li&gt;
+&lt;li&gt;front end&lt;/li&gt;
+&lt;li&gt;back end&lt;/li&gt;
+&lt;li&gt;CI/ CD&lt;/li&gt;
+&lt;li&gt;maintenance&lt;/li&gt;
+&lt;li&gt;refactoring&lt;ul&gt;
+&lt;li&gt;for test&lt;/li&gt;
+&lt;li&gt;for scale&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;tuning&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;User story of resource board&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;code&gt;resource board&lt;/code&gt; 主要解决异地团队协作中对共享资源使用的问题，它是一个电子化的资源使用白板。&lt;/p&gt;
+&lt;p&gt;试想一下没有资源占用白板的时候，团队里的人共享10个虚拟化数据中心，我们简称 &lt;code&gt;DC&lt;/code&gt; ，对于它的使用分几个场景：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CI &lt;ul&gt;
+&lt;li&gt;被CI占用，没有再触发CI调用它的人不可以干预&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;testing&lt;ul&gt;
+&lt;li&gt;被非独占式的人使用中，特定的人可以并行使用它，（理想情况下）不会干扰到彼此&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;occupied&lt;ul&gt;
+&lt;li&gt;被人独占使用，不可与别人共享&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;free&lt;ul&gt;
+&lt;li&gt;任何人可以使用它，或者挪作其他用途&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这种情况下，使用它的A同学需要站起来告诉所有人，或者群发邮件，说我要用 &lt;code&gt;DC123&lt;/code&gt; 独占调试一个代码，有人在用么？ 10分钟后，在注意到没人回复的情况下，ta就在 &lt;code&gt;DC123&lt;/code&gt;上开始&lt;del&gt;做坏事&lt;/del&gt; 调试ta的代码了。然而刚从厕所回来的B同学，却发现ta的环境被破坏了，半天白忙活了😢。&lt;/p&gt;
+&lt;p&gt;如果这个资源共享的工作方式之中引入了记录资源占用情况的白板，A同学只需要看一下白板上空闲的DC，发现&lt;code&gt;DC125&lt;/code&gt; 可以使用，他可以做到：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;无需等待确认广播信息的回复立刻使用 &lt;code&gt;DC125&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;不会破坏任何被占用的资源环境比如 &lt;code&gt;DC123&lt;/code&gt; &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;看起来比较自然。&lt;/p&gt;
+&lt;h1 id=&quot;Planning&quot;&gt;&lt;a href=&quot;#Planning&quot; class=&quot;headerlink&quot; title=&quot;Planning&quot;&gt;&lt;/a&gt;Planning&lt;/h1&gt;&lt;h2 id=&quot;关键点&quot;&gt;&lt;a href=&quot;#关键点&quot; class=&quot;headerlink&quot; title=&quot;关键点&quot;&gt;&lt;/a&gt;关键点&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;数字化白板应该是一个Wep App&lt;/li&gt;
+&lt;li&gt;它需要是实时的&lt;ul&gt;
+&lt;li&gt;支持面向连接的(server —&amp;gt; client)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;可扩展，可扩容&lt;ul&gt;
+&lt;li&gt;后端&lt;ul&gt;
+&lt;li&gt;只做api&lt;/li&gt;
+&lt;li&gt;分布式，可scale up&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;前端&lt;ul&gt;
+&lt;li&gt;single page client&lt;/li&gt;
+&lt;li&gt;websocket&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;简单原型&quot;&gt;&lt;a href=&quot;#简单原型&quot; class=&quot;headerlink&quot; title=&quot;简单原型&quot;&gt;&lt;/a&gt;简单原型&lt;/h2&gt;&lt;p&gt;我用Balsamiq Mockups 简单做了一个原型：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;用卡片表示每一个资源的信息&lt;/li&gt;
+&lt;li&gt;不同的section表示资源被使用的状态，或者分类&lt;/li&gt;
+&lt;li&gt;提供面向资源的历史查看页面&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;我没有花更多时间去画更详细的原型图，只是在画这个初始的版本的过程中引导我思考我初始的数据schema，前后端最开始要做的事情，一旦雏形确定下来，我就直接进入前后端的开发，在开发中直接实现业务逻辑的进化。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt; 这里是我截取的原型图的demo动画 😁&lt;/p&gt;
+&lt;/blockquote&gt;</summary>
+    
+    
+    
+    <category term="build notes" scheme="https://note.siwei.info/categories/build-notes/"/>
+    
+    
+    <category term="fullstack" scheme="https://note.siwei.info/tags/fullstack/"/>
+    
+    <category term="flask" scheme="https://note.siwei.info/tags/flask/"/>
+    
+    <category term="socketio" scheme="https://note.siwei.info/tags/socketio/"/>
+    
+    <category term="vue.js" scheme="https://note.siwei.info/tags/vue-js/"/>
+    
+    <category term="架构" scheme="https://note.siwei.info/tags/%E6%9E%B6%E6%9E%84/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>notes after creating a fuel plugin</title>
+    <link href="https://note.siwei.info/notes-after-creating-a-fuel-plugin/"/>
+    <id>https://note.siwei.info/notes-after-creating-a-fuel-plugin/</id>
+    <published>2019-01-17T02:15:12.000Z</published>
+    <updated>2019-01-17T02:15:12.000Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;关于&quot;&gt;&lt;a href=&quot;#关于&quot; class=&quot;headerlink&quot; title=&quot;关于&quot;&gt;&lt;/a&gt;关于&lt;/h1&gt;&lt;p&gt;这篇文章是我做一个内部 knowledge sharing准备的文档，介绍了如何基于MIranis fuel的平台开发一个fuel plugin，我用了一个死了的项目 nova-docker作为实际的例子。&lt;/p&gt;
+&lt;h1 id=&quot;Build-a-fuel-plugin-from-scrash&quot;&gt;&lt;a href=&quot;#Build-a-fuel-plugin-from-scrash&quot; class=&quot;headerlink&quot; title=&quot;Build a fuel plugin from scrash&quot;&gt;&lt;/a&gt;Build a fuel plugin from scrash&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Live demo:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Let’s try to build a fuel plugin enables nova-docker&lt;/p&gt;
+&lt;p&gt;Code put here: &lt;a href=&quot;https://github.com/wey-gu/fuel-plugin-nova-docker&quot;&gt;https://github.com/wey-gu/fuel-plugin-nova-docker&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;Create-fuel-plugin-for-nova-docker&quot;&gt;&lt;a href=&quot;#Create-fuel-plugin-for-nova-docker&quot; class=&quot;headerlink&quot; title=&quot;Create fuel plugin for nova-docker&quot;&gt;&lt;/a&gt;Create fuel plugin for &lt;code&gt;nova-docker&lt;/code&gt;&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Steps needed:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Step 1 Installation packages&lt;ul&gt;
+&lt;li&gt;install nova-docker&lt;/li&gt;
+&lt;li&gt;install dependency (docker)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Step 2 configuration&lt;ul&gt;
+&lt;li&gt;configuration on nova compute&lt;/li&gt;
+&lt;li&gt;configuration on nova controller&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</summary>
+    
+    
+    
+    <category term="openstack" scheme="https://note.siwei.info/categories/openstack/"/>
+    
+    
+    <category term="openstack" scheme="https://note.siwei.info/tags/openstack/"/>
+    
+    <category term="fuel-plugin" scheme="https://note.siwei.info/tags/fuel-plugin/"/>
+    
+    <category term="puppet" scheme="https://note.siwei.info/tags/puppet/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Openstack Basic for newbie</title>
+    <link href="https://note.siwei.info/openstack-basic-for-newbie/"/>
+    <id>https://note.siwei.info/openstack-basic-for-newbie/</id>
+    <published>2019-01-01T06:27:30.000Z</published>
+    <updated>2019-01-01T06:27:30.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;整理了一下2017年8月份内部做的一个training的slide，去除了不能公布的部分，放在&lt;a</summary>
+        
+      
+    
+    
+    
+    <category term="openstack" scheme="https://note.siwei.info/categories/openstack/"/>
+    
+    
+    <category term="openstack" scheme="https://note.siwei.info/tags/openstack/"/>
+    
+    <category term="slide" scheme="https://note.siwei.info/tags/slide/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>deploy Openstack O on self privisoned virtualbox Ubuntu VMs manually</title>
+    <link href="https://note.siwei.info/deploy-openstack-o-on-self-privisoned-virtualbox-ubuntu-vms-manually/"/>
+    <id>https://note.siwei.info/deploy-openstack-o-on-self-privisoned-virtualbox-ubuntu-vms-manually/</id>
+    <published>2019-01-01T06:04:47.000Z</published>
+    <updated>2019-01-01T06:04:47.000Z</updated>
+    
+    
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;今天，把我之前在公司内部给同事们培训Openstack 介绍的note放到这里，是一年多之前基于当时的O版本的Ubuntu的部署，对于初学的同学也许有一些帮助，不过其实整个过程无非就是参照官方安装的guide而已。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id=&quot;Installation-Guide&quot;&gt;&lt;a href=&quot;#Installation-Guide&quot; class=&quot;headerlink&quot; title=&quot;Installation Guide&quot;&gt;&lt;/a&gt;Installation Guide&lt;/h1&gt;&lt;p&gt;Latest version: &lt;a href=&quot;https://github.com/wey-gu/workshops/blob/master/00-Openstack-Basic/installation-openstack-ubuntu-note.md&quot;&gt;installation-openstack-ubuntu-note.md&lt;/a&gt; hosted on &lt;em&gt;Github.com/wey-gu&lt;/em&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;ref: &lt;a href=&quot;https://docs.openstack.org/install-guide&quot;&gt;https://docs.openstack.org/install-guide&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Ubuntu was chosen as host OS.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“It’s a good way to learn by installing it manually for as many services as you could :-) .”&lt;/p&gt;
+&lt;p&gt;​                                                                                                           Wey Gu &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;Host-networking&quot;&gt;&lt;a href=&quot;#Host-networking&quot; class=&quot;headerlink&quot; title=&quot;Host networking&quot;&gt;&lt;/a&gt;Host networking&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;ref: &lt;a href=&quot;https://docs.openstack.org/install-guide/environment-networking.html&quot;&gt;https://docs.openstack.org/install-guide/environment-networking.html&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;ref: &lt;a href=&quot;https://help.ubuntu.com/lts/serverguide/network-configuration.html&quot;&gt;https://help.ubuntu.com/lts/serverguide/network-configuration.html&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;The example architectures assume use of the following networks:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Management on 10.0.0.0/24 with gateway 10.0.0.1&lt;/p&gt;
+&lt;p&gt;This network requires a gateway to provide Internet access to all nodes for administrative purposes such as package installation, security updates, DNS, and NTP.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Provider on 203.0.113.0/24 with gateway 203.0.113.1&lt;/p&gt;
+&lt;p&gt;This network requires a gateway to provide Internet access to instances in your OpenStack environment.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;My-network-solution&quot;&gt;&lt;a href=&quot;#My-network-solution&quot; class=&quot;headerlink&quot; title=&quot;My network solution&quot;&gt;&lt;/a&gt;My network solution&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;Net0:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	Network name: VirtualBox  host-only Ethernet Adapter&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	Purpose: administrator / management network&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	IP block: 10.20.0.0/24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	DHCP: &lt;span class=&quot;built_in&quot;&gt;disable&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	Linux device: eth0&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Net1:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	Network name: VirtualBox  host-only Ethernet Adapter&lt;span class=&quot;comment&quot;&gt;#2&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	Purpose: Provider network&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	DHCP: &lt;span class=&quot;built_in&quot;&gt;disable&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	IP block: 172.16.0.0/24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	Linux device: eth1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Net2：&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	Network name: VirtualBox  host-only Ethernet Adapter&lt;span class=&quot;comment&quot;&gt;#3&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	Purpose: Storage network&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	DHCP: &lt;span class=&quot;built_in&quot;&gt;disable&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	IP block: 192.168.99.0/24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	Linux device: eth2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Net3：&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	Network name: VirtualBox  Bridged or NAT // &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; accessing network or remote access purpose&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	Purpose: Internet&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	DHCP: &lt;span class=&quot;built_in&quot;&gt;enable&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	IP block: &amp;lt;depend on your network&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	Linux device: eth3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+
+
+
+&lt;p&gt;Edit the &lt;code&gt;/etc/network/interfaces&lt;/code&gt; file to contain the following:&lt;/p&gt;
+&lt;p&gt;Replace &lt;code&gt;INTERFACE_NAME&lt;/code&gt; with the actual interface name. For example, &lt;em&gt;eth1&lt;/em&gt; or &lt;em&gt;ens224&lt;/em&gt;.&lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# The provider network interface&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;auto INTERFACE_NAME&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;iface INTERFACE_NAME inet manual&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;up ip link &lt;span class=&quot;built_in&quot;&gt;set&lt;/span&gt; dev &lt;span class=&quot;variable&quot;&gt;$IFACE&lt;/span&gt; up&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;down ip link &lt;span class=&quot;built_in&quot;&gt;set&lt;/span&gt; dev &lt;span class=&quot;variable&quot;&gt;$IFACE&lt;/span&gt; down&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
+    
+    
+    
+    <category term="openstack" scheme="https://note.siwei.info/categories/openstack/"/>
+    
+    
+    <category term="openstack" scheme="https://note.siwei.info/tags/openstack/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>my HHKB and macOS setup</title>
+    <link href="https://note.siwei.info/my-hhkb-and-macos-setup/"/>
+    <id>https://note.siwei.info/my-hhkb-and-macos-setup/</id>
+    <published>2018-12-21T09:32:39.000Z</published>
+    <updated>2018-12-21T09:32:39.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h1 id=&quot;Key-mapping&quot;&gt;&lt;a href=&quot;#Key-mapping&quot; class=&quot;headerlink&quot; title=&quot;Key mapping&quot;&gt;&lt;/a&gt;Key mapping&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;几个月前，我从 &lt;code&gt;HHKB</summary>
+        
+      
+    
+    
+    
+    <category term="random notes" scheme="https://note.siwei.info/categories/random-notes/"/>
+    
+    
+    <category term="HHKB" scheme="https://note.siwei.info/tags/hhkb/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>ML 2017 fall homework1 Linear Regression 笔记</title>
+    <link href="https://note.siwei.info/ML-2017-fall-HW1-note/"/>
+    <id>https://note.siwei.info/ML-2017-fall-HW1-note/</id>
+    <published>2018-05-27T16:31:07.000Z</published>
+    <updated>2018-05-27T16:31:07.000Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;Gradient-Descent-for-linear-regression-task&quot;&gt;&lt;a href=&quot;#Gradient-Descent-for-linear-regression-task&quot; class=&quot;headerlink&quot; title=&quot;Gradient Descent for linear regression task&quot;&gt;&lt;/a&gt;Gradient Descent for linear regression task&lt;/h1&gt;&lt;h2 id=&quot;Data-pre-processing&quot;&gt;&lt;a href=&quot;#Data-pre-processing&quot; class=&quot;headerlink&quot; title=&quot;Data pre processing&quot;&gt;&lt;/a&gt;Data pre processing&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;Load data from csv file to a list&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;trainDataList = &lt;span class=&quot;built_in&quot;&gt;list&lt;/span&gt;()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;with&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;open&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;&amp;quot;train.csv&amp;quot;&lt;/span&gt;, newline=&lt;span class=&quot;string&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;) &lt;span class=&quot;keyword&quot;&gt;as&lt;/span&gt; csvfile:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    trainData = csv.reader(csvfile, delimiter=&lt;span class=&quot;string&quot;&gt;&amp;quot;,&amp;quot;&lt;/span&gt;,quotechar=&lt;span class=&quot;string&quot;&gt;&amp;quot;|&amp;quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; line &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; trainData:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        trainDataList.append(line[&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;:])&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;make all train data in one list, to enable iterating per hour of the list, thus, we have &lt;code&gt;(24 * days - 10 + 1)&lt;/code&gt; training data.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;trainDataIteratedPerHour: list()&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# n lines to be one day&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;mod_18&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;n&lt;/span&gt;):&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; n % &lt;span class=&quot;number&quot;&gt;18&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# transpose a matrix(2D list)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;T_list&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;l&lt;/span&gt;):&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; np.array(l).T.tolist()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;i = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;trainDataIteratedPerHour = []&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;listToAppend = []&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; item &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; trainDataList[&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;:]:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;not&lt;/span&gt; mod_18(i):&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;comment&quot;&gt;# from mod 10: 0&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        listToAppend = [item]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;elif&lt;/span&gt; mod_18(i) == &lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;comment&quot;&gt;# rain, consider &amp;quot;NR&amp;quot; = 0&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        listToAppend.append([&lt;span class=&quot;string&quot;&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; x == &lt;span class=&quot;string&quot;&gt;&amp;#x27;NR&amp;#x27;&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt; x &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; x &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; item])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;elif&lt;/span&gt; mod_18(i) == &lt;span class=&quot;number&quot;&gt;17&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;comment&quot;&gt;# all 18 lines collected, built a set of data to extend&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        listToAppend.append(item)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        trainDataIteratedPerHour.extend(T_list(listToAppend))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;comment&quot;&gt;# append other data&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        listToAppend.append(item)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    i = i + &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;i = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;build &lt;code&gt;x_data&lt;/code&gt; and &lt;code&gt;y_data&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;build x_data and y_data&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;string&quot;&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;x_data = [] &lt;span class=&quot;comment&quot;&gt;# 18*9 dimensions&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;y_data = [] &lt;span class=&quot;comment&quot;&gt;# scalar, pm2.5 of next hour for x_data&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; n &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(&lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(trainDataIteratedPerHour) - &lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;):&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    x_data.extend(np.array(trainDataIteratedPerHour[n : n + &lt;span class=&quot;number&quot;&gt;9&lt;/span&gt;]).reshape(&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;162&lt;/span&gt;).tolist())&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    y_data.append(trainDataIteratedPerHour[n + &lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;][&lt;span class=&quot;number&quot;&gt;9&lt;/span&gt;])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;x_data = [[&lt;span class=&quot;built_in&quot;&gt;float&lt;/span&gt;(j) &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; j &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; i] &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; i &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; x_data]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;y_data = [&lt;span class=&quot;built_in&quot;&gt;float&lt;/span&gt;(i) &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; i &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; y_data]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;draw plot (to feel the range of the data)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# draw plot of pm2.5 range?&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; matplotlib&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; matplotlib.pyplot &lt;span class=&quot;keyword&quot;&gt;as&lt;/span&gt; plt&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;x = &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(&lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(y_data))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;y = np.array(y_data)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# refer to https://matplotlib.org/2.2.2/gallery/lines_bars_and_markers/simple_plot.html&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;fig, ax = plt.subplots()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;ax.plot(x, y)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# plt.show()&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+
+&lt;h2 id=&quot;Loss-function&quot;&gt;&lt;a href=&quot;#Loss-function&quot; class=&quot;headerlink&quot; title=&quot;Loss function&quot;&gt;&lt;/a&gt;Loss function&lt;/h2&gt;&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;lossFunction&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;w, x_data, y_data&lt;/span&gt;):&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    w = np.array(w)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    x_data = np.array(x_data)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    result = &lt;span class=&quot;number&quot;&gt;0.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; i &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(&lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(y_data)):&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        result += (y_data[i] - &lt;span class=&quot;built_in&quot;&gt;sum&lt;/span&gt;(w * x_data[i]))**&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; result&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# w = [0.01] * 162&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# L = lossFunction(w,x_data,y_data)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+
+&lt;h2 id=&quot;Iterations-for-grident-descent&quot;&gt;&lt;a href=&quot;#Iterations-for-grident-descent&quot; class=&quot;headerlink&quot; title=&quot;Iterations for grident descent&quot;&gt;&lt;/a&gt;Iterations for grident descent&lt;/h2&gt;&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# Iterations&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;iterationRun&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;lr,iteration,x_data,y_data&lt;/span&gt;):&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;# initial data&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    w = [&lt;span class=&quot;number&quot;&gt;0.01&lt;/span&gt;] * &lt;span class=&quot;number&quot;&gt;162&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    L_history = [lossFunction(w,x_data,y_data)]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    w = np.array(w)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    x_data = np.array(x_data)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; iterator &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(iteration):&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;comment&quot;&gt;# initialize w_grad&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        w_grad = [&lt;span class=&quot;number&quot;&gt;0.0&lt;/span&gt;] * &lt;span class=&quot;number&quot;&gt;162&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;comment&quot;&gt;# sum of all training data set&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; n &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(&lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(y_data)):&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;comment&quot;&gt;# per feature&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; i &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(&lt;span class=&quot;number&quot;&gt;162&lt;/span&gt;):&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                w_grad[i] = w_grad[i] - &lt;span class=&quot;number&quot;&gt;2.0&lt;/span&gt; * x_data[n][i] * ( &lt;span class=&quot;built_in&quot;&gt;sum&lt;/span&gt;(w * x_data[n]) - y_data[n] )&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;comment&quot;&gt;# update w&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; i &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(&lt;span class=&quot;number&quot;&gt;162&lt;/span&gt;):&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            w[i] = w[i] + lr * w_grad[i]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;comment&quot;&gt;# store Loss Function hisotry for plotting&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        L_history.append(lossFunction(w,x_data,y_data))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;print&lt;/span&gt; (&lt;span class=&quot;built_in&quot;&gt;str&lt;/span&gt;(iterator) + &lt;span class=&quot;string&quot;&gt;&amp;quot; : &amp;quot;&lt;/span&gt; + &lt;span class=&quot;built_in&quot;&gt;str&lt;/span&gt;(datetime.datetime.now().time()) + &lt;span class=&quot;string&quot;&gt;&amp;quot; L:&amp;quot;&lt;/span&gt; + &lt;span class=&quot;built_in&quot;&gt;str&lt;/span&gt;(L_history[-&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;]))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; L_history&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;Run it for 10 iterations&lt;/p&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;lr = &lt;span class=&quot;number&quot;&gt;0.0000000000001&lt;/span&gt; &lt;span class=&quot;comment&quot;&gt;# learning rate&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;iteration = &lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;iterationRun(lr,iteration,x_data,y_data)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+
+&lt;h2 id=&quot;Tunning&quot;&gt;&lt;a href=&quot;#Tunning&quot; class=&quot;headerlink&quot; title=&quot;Tunning&quot;&gt;&lt;/a&gt;Tunning&lt;/h2&gt;&lt;h3 id=&quot;Find-good-initial-learning-rate&quot;&gt;&lt;a href=&quot;#Find-good-initial-learning-rate&quot; class=&quot;headerlink&quot; title=&quot;Find good initial learning rate&quot;&gt;&lt;/a&gt;Find good initial learning rate&lt;/h3&gt;&lt;p&gt;start with &lt;code&gt;lr = 0.0000000000001&lt;/code&gt;&lt;/p&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;In [&lt;span class=&quot;number&quot;&gt;19&lt;/span&gt;]: lr = &lt;span class=&quot;number&quot;&gt;0.0000000000001&lt;/span&gt; &lt;span class=&quot;comment&quot;&gt;# learning rate&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ...: iteration = &lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ...: iterationRun(lr,iteration,x_data,y_data)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ...:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt; : &lt;span class=&quot;number&quot;&gt;13&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;21&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;22.227145&lt;/span&gt; L:&lt;span class=&quot;number&quot;&gt;5897161.869645979&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt; : &lt;span class=&quot;number&quot;&gt;13&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;21&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;53.988814&lt;/span&gt; L:&lt;span class=&quot;number&quot;&gt;5890818.193569232&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt; : &lt;span class=&quot;number&quot;&gt;13&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;22&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;25.639150&lt;/span&gt; L:&lt;span class=&quot;number&quot;&gt;5884483.073933817&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt; : &lt;span class=&quot;number&quot;&gt;13&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;22&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;57.211950&lt;/span&gt; L:&lt;span class=&quot;number&quot;&gt;5878156.49918669&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;number&quot;&gt;4&lt;/span&gt; : &lt;span class=&quot;number&quot;&gt;13&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;23&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;28.873442&lt;/span&gt; L:&lt;span class=&quot;number&quot;&gt;5871838.457790465&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt; : &lt;span class=&quot;number&quot;&gt;13&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;24&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;01.059230&lt;/span&gt; L:&lt;span class=&quot;number&quot;&gt;5865528.93822318&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;hmmm… try greater lr&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;lr = 0.00000000001&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The loss function is descenting faster, like around 60000 per epoch.&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="random notes" scheme="https://note.siwei.info/categories/random-notes/"/>
+    
+    
+    <category term="machine learning" scheme="https://note.siwei.info/tags/machine-learning/"/>
+    
+    <category term="homework" scheme="https://note.siwei.info/tags/homework/"/>
+    
+  </entry>
+  
+</feed>
