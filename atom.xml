@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Siwei Notes</title>
-  <icon>https://note.siwei.info/wey_pixel_tinified.png</icon>
+  <icon>https://note.siwei.info/images/wey_pixel_tinified.png</icon>
   <subtitle>思为笔记</subtitle>
   <link href="https://note.siwei.info/atom.xml" rel="self"/>
   
