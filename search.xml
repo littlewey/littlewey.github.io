@@ -150,10 +150,10 @@
         <category>openstack</category>
       </categories>
       <tags>
-        <tag>openstack</tag>
         <tag>distributed system</tag>
         <tag>troubleshoot</tag>
         <tag>NTP</tag>
+        <tag>openstack</tag>
       </tags>
   </entry>
   <entry>

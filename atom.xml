@@ -211,13 +211,13 @@
     <category term="openstack" scheme="https://note.siwei.info/categories/openstack/"/>
     
     
-    <category term="openstack" scheme="https://note.siwei.info/tags/openstack/"/>
-    
     <category term="distributed system" scheme="https://note.siwei.info/tags/distributed-system/"/>
     
     <category term="troubleshoot" scheme="https://note.siwei.info/tags/troubleshoot/"/>
     
     <category term="NTP" scheme="https://note.siwei.info/tags/ntp/"/>
+    
+    <category term="openstack" scheme="https://note.siwei.info/tags/openstack/"/>
     
   </entry>
   

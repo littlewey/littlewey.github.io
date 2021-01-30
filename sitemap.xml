@@ -100,14 +100,14 @@
   </url>
   
   <url>
-    <loc>https://note.siwei.info/resume/index.html</loc>
+    <loc>https://note.siwei.info/resume_chs/index.html</loc>
     
     <lastmod>2018-05-29</lastmod>
     
   </url>
   
   <url>
-    <loc>https://note.siwei.info/resume_chs/index.html</loc>
+    <loc>https://note.siwei.info/resume/index.html</loc>
     
     <lastmod>2018-05-29</lastmod>
     
@@ -144,34 +144,6 @@
 
   
   <url>
-    <loc>https://note.siwei.info/tags/openstack/</loc>
-    <lastmod>2021-01-30</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://note.siwei.info/tags/cloud/</loc>
-    <lastmod>2021-01-30</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://note.siwei.info/tags/machine-learning/</loc>
-    <lastmod>2021-01-30</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://note.siwei.info/tags/bayesian-optimization/</loc>
-    <lastmod>2021-01-30</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://note.siwei.info/tags/distributed-system/</loc>
     <lastmod>2021-01-30</lastmod>
     <changefreq>daily</changefreq>
@@ -187,6 +159,13 @@
   
   <url>
     <loc>https://note.siwei.info/tags/ntp/</loc>
+    <lastmod>2021-01-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://note.siwei.info/tags/openstack/</loc>
     <lastmod>2021-01-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -215,6 +194,27 @@
   
   <url>
     <loc>https://note.siwei.info/tags/hhkb/</loc>
+    <lastmod>2021-01-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://note.siwei.info/tags/cloud/</loc>
+    <lastmod>2021-01-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://note.siwei.info/tags/machine-learning/</loc>
+    <lastmod>2021-01-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://note.siwei.info/tags/bayesian-optimization/</loc>
     <lastmod>2021-01-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -335,14 +335,14 @@
 
   
   <url>
-    <loc>https://note.siwei.info/categories/random-notes/</loc>
+    <loc>https://note.siwei.info/categories/openstack/</loc>
     <lastmod>2021-01-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://note.siwei.info/categories/openstack/</loc>
+    <loc>https://note.siwei.info/categories/random-notes/</loc>
     <lastmod>2021-01-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
