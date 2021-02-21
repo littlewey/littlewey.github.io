@@ -6,7 +6,7 @@
   <link href="https://note.siwei.info/atom.xml" rel="self"/>
   
   <link href="https://note.siwei.info/"/>
-  <updated>2020-08-18T12:09:58.000Z</updated>
+  <updated>2021-02-21T19:29:50.000Z</updated>
   <id>https://note.siwei.info/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Pokemon Club, a demo app with Nebula Graph</title>
+    <link href="https://note.siwei.info/pokemon-club-a-demo-app-with-nebula-graph/"/>
+    <id>https://note.siwei.info/pokemon-club-a-demo-app-with-nebula-graph/</id>
+    <published>2021-02-21T19:29:50.000Z</published>
+    <updated>2021-02-21T19:29:50.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;About&quot;&gt;&lt;a href=&quot;#About&quot; class=&quot;headerlink&quot; title=&quot;About&quot;&gt;&lt;/a&gt;About&lt;/h2&gt;&lt;p&gt;In the database world, there is one type of NoSQL db</summary>
+        
+      
+    
+    
+    
+    
+    <category term="Nebula Graph" scheme="https://note.siwei.info/tags/nebula-graph/"/>
+    
+    <category term="NoSQL" scheme="https://note.siwei.info/tags/nosql/"/>
+    
+  </entry>
   
   <entry>
     <title>Performance Optimization refactor in Large Python Codebase, a note</title>
@@ -211,13 +236,13 @@
     <category term="openstack" scheme="https://note.siwei.info/categories/openstack/"/>
     
     
+    <category term="openstack" scheme="https://note.siwei.info/tags/openstack/"/>
+    
     <category term="distributed system" scheme="https://note.siwei.info/tags/distributed-system/"/>
     
     <category term="troubleshoot" scheme="https://note.siwei.info/tags/troubleshoot/"/>
     
     <category term="NTP" scheme="https://note.siwei.info/tags/ntp/"/>
-    
-    <category term="openstack" scheme="https://note.siwei.info/tags/openstack/"/>
     
   </entry>
   
