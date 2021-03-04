@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 5.4.0">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/wey_pixel_tinified.png">
@@ -18,12 +18,12 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"note.siwei.info","root":"/","images":"/images","scheme":"Pisces","version":"8.2.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+    var CONFIG = {"hostname":"note.siwei.info","root":"/","images":"/images","scheme":"Pisces","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 <meta name="description" content="I build things">
 <meta property="og:type" content="website">
@@ -350,26 +350,32 @@
 </blockquote>
 <p><code>zlib not available</code>, one thing to highlight is to enable zlib, we have to do this:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xcode-select --install</span><br><span class="line">sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /</span><br></pre></td></tr></table></figure>
+
 <p>Below are things we need to ensure pyenv magically modified our enviroment variables to point specific version of python.</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ brew install pyenv</span><br><span class="line">$ <span class="built_in">cd</span> &lt;project_path&gt;</span><br><span class="line">$ pyenv install 3.6.8</span><br><span class="line">$ pyenv <span class="built_in">local</span> 3.6.8</span><br><span class="line">$ pyenv init</span><br><span class="line"><span class="comment"># Load pyenv automatically by appending</span></span><br><span class="line"><span class="comment"># the following to ~/.zshrc:</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">eval</span> <span class="string">&quot;<span class="subst">$(pyenv init -)</span>&quot;</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">which</span> python</span><br><span class="line">/usr/<span class="built_in">local</span>/bin/python</span><br><span class="line">$ <span class="built_in">eval</span> <span class="string">&quot;<span class="subst">$(pyenv init -)</span>&quot;</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">which</span> python</span><br><span class="line">/Users/&lt;user&gt;/.pyenv/shims/python</span><br></pre></td></tr></table></figure>
+
 
 
 <h2 id="jupyter-IPython-kernel-management"><a href="#jupyter-IPython-kernel-management" class="headerlink" title="jupyter/IPython kernel management"></a>jupyter/IPython kernel management</h2><blockquote>
 <p>ref: <a target="_blank" rel="noopener" href="https://ipython.readthedocs.io/en/latest/install/kernel_install.html">https://ipython.readthedocs.io/en/latest/install/kernel_install.html</a></p>
 </blockquote>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ jupyter kernelspec list</span><br><span class="line">Available kernels:</span><br><span class="line">  python3    /usr/<span class="built_in">local</span>/share/jupyter/kernels/python3</span><br><span class="line"></span><br><span class="line">$ python -m virtualenv py36</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">source</span> py36/bin/activate</span><br><span class="line"></span><br><span class="line">$ pip install ipykernel</span><br><span class="line"></span><br><span class="line">$ python -m ipykernel install --user --name py36 --display-name <span class="string">&quot;ProjectName py36&quot;</span></span><br><span class="line"></span><br><span class="line">$ jupyter kernelspec list</span><br><span class="line">Available kernels:</span><br><span class="line">  py36       /Users/&lt;user&gt;/Library/Jupyter/kernels/py36</span><br><span class="line">  python3    /usr/<span class="built_in">local</span>/share/jupyter/kernels/python3</span><br></pre></td></tr></table></figure>
+
 <p>Then, from the jupyter notebook webpage, you could select kernels from <code>Kernel: Change Kernel</code></p>
 <h2 id="matplotlib-calling-latex-failed-on-macOS"><a href="#matplotlib-calling-latex-failed-on-macOS" class="headerlink" title="matplotlib calling latex failed on macOS"></a><code>matplotlib</code> calling <code>latex</code> failed on macOS</h2><blockquote>
 <p>plot call failed due to latex could not be invoked</p>
 </blockquote>
 <h3 id="Root-cause"><a href="#Root-cause" class="headerlink" title="Root cause"></a>Root cause</h3><p>LaTeX was not installed or cannot be called from<code>latex</code></p>
 <h3 id="Minimal-reproducing"><a href="#Minimal-reproducing" class="headerlink" title="Minimal reproducing"></a>Minimal reproducing</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; import subprocess; subprocess.check_call(<span class="string">&quot;latex&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># FileNotFoundError: [Errno 2] No such file or directory: &#x27;latex&#x27;: &#x27;latex&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># or from shell</span></span><br><span class="line"></span><br><span class="line">$ latex</span><br><span class="line"><span class="comment"># latex not found</span></span><br></pre></td></tr></table></figure>
+
 <h3 id="Fix"><a href="#Fix" class="headerlink" title="Fix"></a>Fix</h3><ul>
 <li>install Tex Live for macOS</li>
 <li>append <code>PATH</code> for <code>/Library/TeX/texbin</code></li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ wget http://tug.org/cgi-bin/mactex-download/MacTeX.pkg</span><br><span class="line"><span class="comment"># checksum and install MacTeX.pkg</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># assuming you are using zsh</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&#x27;export PATH=&quot;$PATH:/Library/TeX/texbin&quot;&#x27;</span> &gt;&gt; ~/.zshrc</span><br><span class="line"></span><br><span class="line"><span class="comment"># assuming you are using bash</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&#x27;export PATH=&quot;$PATH:/Library/TeX/texbin&quot;&#x27;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+
 <h3 id="Verify-it"><a href="#Verify-it" class="headerlink" title="Verify it"></a>Verify it</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">export</span> PATH=<span class="string">&quot;<span class="variable">$PATH</span>:/Library/TeX/texbin&quot;</span></span><br><span class="line">$ latex --version</span><br><span class="line">pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)</span><br><span class="line">kpathsea version 6.3.0</span><br><span class="line">Copyright 2018 Han The Thanh (pdfTeX) et al.</span><br><span class="line">There is NO warranty.  Redistribution of this software is</span><br><span class="line">covered by the terms of both the pdfTeX copyright and</span><br><span class="line">the Lesser GNU General Public License.</span><br><span class="line">For more information about these matters, see the file</span><br><span class="line">named COPYING and the pdfTeX <span class="built_in">source</span>.</span><br><span class="line">Primary author of pdfTeX: Han The Thanh (pdfTeX) et al.</span><br><span class="line">Compiled with libpng 1.6.34; using libpng 1.6.34</span><br><span class="line">Compiled with zlib 1.2.11; using zlib 1.2.11</span><br><span class="line">Compiled with xpdf version 4.00</span><br></pre></td></tr></table></figure>
+
 
       
     </div>
@@ -453,14 +459,13 @@
 </ul>
 </li>
 <li><p><code>get_weighed_objects</code> is doing this:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i, weight <span class="keyword">in</span> <span class="built_in">enumerate</span>(weights):</span><br><span class="line">    obj = weighed_objs[i]</span><br><span class="line">    obj.weight += weigher.weight_multiplier() * weight</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i, weight <span class="keyword">in</span> <span class="built_in">enumerate</span>(weights):</span><br><span class="line">    obj = weighed_objs[i]</span><br><span class="line">    obj.weight += weigher.weight_multiplier() * weight</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
 <blockquote>
 <p>Below are mentioned subroutines…</p>
 </blockquote>
-</li>
-</ul>
-</li>
-</ul>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/nova-scheduling-study-on-making-it-smart-by-machine-learning/#more" rel="contents">

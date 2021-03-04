@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 5.4.0">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/wey_pixel_tinified.png">
@@ -18,12 +18,12 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"note.siwei.info","root":"/","images":"/images","scheme":"Pisces","version":"8.2.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+    var CONFIG = {"hostname":"note.siwei.info","root":"/","images":"/images","scheme":"Pisces","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 <meta name="description" content="I build things">
 <meta property="og:type" content="website">
@@ -346,6 +346,7 @@
 <p>Download image</p>
 </blockquote>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img</span><br></pre></td></tr></table></figure>
+
 <blockquote>
 <p>Configure Password for the image, here we use chroot instead of config drive, the reason is at bottom.</p>
 </blockquote>
@@ -444,6 +445,7 @@
 </ul>
 <p>And it should be like this:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">+-------------+        +-------------+        +-------------+</span><br><span class="line">|             |        |     vRouter |        |   machine_0 |</span><br><span class="line">|             |        |192.168.56.10|        |             |</span><br><span class="line">|           +-+        +-+           |        |             |</span><br><span class="line">|           | |00000000| rr          |        |             |</span><br><span class="line">|           +-+        +-+r          |        |             |</span><br><span class="line">|192.168.56.11|        |  r          |        |             |</span><br><span class="line">|             |        |  r          |        |             |</span><br><span class="line">|             |        |  r          |        |             |</span><br><span class="line">|             |        |  r        +-+        +-+           |</span><br><span class="line">| Cobbler     |        |  rrrrrrrrr| |11111111| |           |</span><br><span class="line">| Server      |        |           +-+        +-+           |</span><br><span class="line">|             |        |192.168.57.10|        |             |</span><br><span class="line">+-------------+        +-------------+        +-------------+</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">0000000 subnet A: vboxnet0     +-+</span><br><span class="line">                               | | network interface</span><br><span class="line">1111111 subnet B: vboxnet1     +-+</span><br><span class="line"></span><br><span class="line">rrrrrrr DHCP Relay</span><br></pre></td></tr></table></figure>
+
 <p>Then we could use cobbler_server to provision a OS to machine_0.</p>
           <!--noindex-->
             <div class="post-button">
